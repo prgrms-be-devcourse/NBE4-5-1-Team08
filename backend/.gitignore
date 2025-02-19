@@ -9,7 +9,7 @@ src/main/resources/application.yml
 ### STS ###
 .apt_generated
 .classpath
-.factorypath
+.factorypathf
 .project
 .settings
 .springBeans
