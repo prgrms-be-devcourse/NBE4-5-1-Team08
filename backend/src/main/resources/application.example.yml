@@ -1,1 +1,21 @@
-spring.application.name=NBE4_5_1_8
+spring:
+  datasource:
+    url: jdbc:mysql://localhost:3306/coffee_shop_db  # 데이터베이스 URL (DB 이름: coffee_shop_db)
+    username: { }                     # MySQL 사용자 이름
+    password: { }                    # MySQL 비밀번호
+    driver-class-name: com.mysql.cj.jdbc.Driver      # MySQL 드라이버 클래스
+
+  jpa:
+    hibernate:
+      ddl-auto: create                               # 테이블 자동 생성 (create, update, validate, none 중 선택 가능)
+    show-sql: true                                   # SQL 쿼리 로깅 (개발 중 디버깅 용도로 유용함)
+    properties:
+      hibernate:
+        format_sql: true                             # SQL 포맷팅
+        dialect: org.hibernate.dialect.MySQL8Dialect # MySQL 8.x 버전의 Hibernate Dialect
+  h2:
+    console:
+      enabled: false                                 # H2 콘솔 비활성화 (MySQL 사용 시)
+
+server:
+  port: 8080                                         # 애플리케이션 서버 포트
