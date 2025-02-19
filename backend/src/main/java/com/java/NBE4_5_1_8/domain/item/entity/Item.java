@@ -1,4 +1,4 @@
-package com.java.NBE4_5_1_8.domain.orderInfo.entiry;
+package com.java.NBE4_5_1_8.domain.item.entity;
 
 import com.java.NBE4_5_1_8.global.entity.BaseTime;
 import jakarta.persistence.Entity;
@@ -8,16 +8,15 @@ import jakarta.persistence.Id;
 import lombok.Getter;
 import lombok.Setter;
 
-
 @Entity
 @Getter
 @Setter
-public class OrderInfo extends BaseTime {
-
+public class Item extends BaseTime {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long OrderId;
-    private String OrderStatus;
-    private String memberEmail;
-    private String memberAddress;
+    private Long id;
+    private String itemName;
+    private String category;
+    private String description; // 제품 설명
+    private int stockQuantity;
 }

@@ -1,8 +1,8 @@
 spring:
   datasource:
     url: jdbc:mysql://localhost:3306/coffee_shop_db  # 데이터베이스 URL (DB 이름: coffee_shop_db)
-    username: { }                     # MySQL 사용자 이름
-    password: { }                    # MySQL 비밀번호
+    username: root                     # MySQL 사용자 이름
+    password: lldj123414                    # MySQL 비밀번호
     driver-class-name: com.mysql.cj.jdbc.Driver      # MySQL 드라이버 클래스
 
   jpa:
