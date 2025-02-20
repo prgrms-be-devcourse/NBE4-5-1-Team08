@@ -1,12 +1,12 @@
-package com.java.NBE4_5_1_8.domain.orderInfo.entity;
+package com.java.NBE4_5_1_8.domain.orderinfo.entity;
 
+import com.java.NBE4_5_1_8.domain.orderitem.OrderItem;
 import com.java.NBE4_5_1_8.global.entity.BaseTime;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
+
+import java.util.List;
 
 
 @Entity
@@ -20,4 +20,7 @@ public class OrderInfo extends BaseTime {
     private String orderStatus;
     private String memberEmail;
     private String memberAddress;
+
+    @OneToMany(mappedBy = "orderInfo")
+    private List<OrderItem> orderItems;
 }
