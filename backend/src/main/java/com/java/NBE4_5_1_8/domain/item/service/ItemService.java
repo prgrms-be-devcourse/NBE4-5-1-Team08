@@ -33,4 +33,9 @@ public class ItemService {
         return itemRepository.findById(itemId)
                 .orElseThrow(() -> new IllegalArgumentException("해당 상품이 없습니다. id=" + itemId));
     }
+
+    public long count() {
+        return itemRepository.count();
+    }
+
 }
