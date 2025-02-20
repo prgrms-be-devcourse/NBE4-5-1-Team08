@@ -18,8 +18,8 @@ public class ItemController {
 
 
     @PostMapping
-    public RsData<ItemForm> createItem(@RequestBody ItemForm requestDto) {
-        Item item = itemService.createItem(requestDto);
+    public RsData<ItemForm> createItem(@RequestBody ItemForm requestForm) {
+        Item item = itemService.createItem(requestForm);
         return RsData.success(new ItemForm(item), "상품 등록 성공");
     }
 
