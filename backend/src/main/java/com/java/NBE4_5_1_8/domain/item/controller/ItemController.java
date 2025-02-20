@@ -35,9 +35,9 @@ public class ItemController {
     }
 
     @GetMapping("/{itemId}")
-    public RsData<ItemForm> getItemById(@PathVariable Long itemId) {
+    public RsData<ItemDto> getItemById(@PathVariable Long itemId) {
         Item item = itemService.getItemById(itemId);
 
-        return RsData.success(new ItemForm(item), "상품 단건 조회 성공");
+        return RsData.success(new ItemDto(item), "상품 단건 조회 성공");
     }
 }
