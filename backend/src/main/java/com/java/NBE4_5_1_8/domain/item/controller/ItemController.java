@@ -25,7 +25,6 @@ public class ItemController {
 
     @GetMapping
     public RsData<List<ItemDto>> getItem() {
-        //TODO item to itemDto
         List<Item> items = itemService.findAllItem();
         return RsData.success(
                 items
