@@ -17,7 +17,10 @@ public class OrderInfo extends BaseTime {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long orderId;
-    private String orderStatus;
+
+    @Enumerated(EnumType.STRING)
+    private OrderStatus orderStatus;
+
     private String memberEmail;
     private String memberAddress;
 
