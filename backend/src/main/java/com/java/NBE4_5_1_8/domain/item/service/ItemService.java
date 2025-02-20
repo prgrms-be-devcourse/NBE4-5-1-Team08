@@ -25,7 +25,12 @@ public class ItemService {
         return itemRepository.save(item);
     }
 
-    public List<Item> findAllItem() {
+    public List<Item> getItemList() {
         return itemRepository.findAll();
+    }
+
+    public Item getItemById(Long itemId) {
+        return itemRepository.findById(itemId)
+                .orElseThrow(() -> new IllegalArgumentException("해당 상품이 없습니다. id=" + itemId));
     }
 }
