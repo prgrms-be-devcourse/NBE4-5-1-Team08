@@ -1,4 +1,5 @@
 package com.java.NBE4_5_1_8.domain.item.controller;
+
 import com.java.NBE4_5_1_8.domain.item.dto.ItemDto;
 import com.java.NBE4_5_1_8.domain.item.dto.ItemForm;
 import com.java.NBE4_5_1_8.domain.item.entity.Item;
@@ -16,7 +17,6 @@ public class ItemController {
 
     private final ItemService itemService;
 
-
     @PostMapping
     public RsData<ItemDto> createItem(@RequestBody ItemForm requestForm) {
         Item item = itemService.createItem(requestForm);
@@ -28,9 +28,9 @@ public class ItemController {
         List<Item> items = itemService.getItemList();
         return RsData.success(
                 items
-                .stream()
-                .map(ItemDto::new)
-                .toList(),
+                        .stream()
+                        .map(ItemDto::new)
+                        .toList(),
                 "상품 조회 성공");
     }
 
@@ -47,4 +47,5 @@ public class ItemController {
 
         return RsData.success(new ItemDto(item), "상품 수정 성공");
     }
+
 }

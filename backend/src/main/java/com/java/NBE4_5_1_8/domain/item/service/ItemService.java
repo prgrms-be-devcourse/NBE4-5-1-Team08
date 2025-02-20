@@ -15,12 +15,12 @@ public class ItemService {
     private final ItemRepository itemRepository;
 
     @Transactional
-    public Item createItem(ItemForm requestDto) {
+    public Item createItem(ItemForm requestForm) {
         Item item = new Item();
-        item.setItemName(requestDto.getItemName());
-        item.setCategory(requestDto.getCategory());
-        item.setDescription(requestDto.getDescription());
-        item.setStockQuantity(requestDto.getStockQuantity());
+        item.setItemName(requestForm.getItemName());
+        item.setCategory(requestForm.getCategory());
+        item.setDescription(requestForm.getDescription());
+        item.setStockQuantity(requestForm.getStockQuantity());
 
         return itemRepository.save(item);
     }
