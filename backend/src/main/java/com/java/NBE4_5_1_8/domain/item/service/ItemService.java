@@ -1,6 +1,6 @@
 package com.java.NBE4_5_1_8.domain.item.service;
 
-import com.java.NBE4_5_1_8.domain.item.dto.ItemDto;
+import com.java.NBE4_5_1_8.domain.item.dto.ItemForm;
 import com.java.NBE4_5_1_8.domain.item.entity.Item;
 import com.java.NBE4_5_1_8.domain.item.repository.ItemRepository;
 import lombok.RequiredArgsConstructor;
@@ -15,7 +15,7 @@ public class ItemService {
     private final ItemRepository itemRepository;
 
     @Transactional
-    public Item createItem(ItemDto requestDto) {
+    public Item createItem(ItemForm requestDto) {
         Item item = new Item();
         item.setItemName(requestDto.getItemName());
         item.setCategory(requestDto.getCategory());
