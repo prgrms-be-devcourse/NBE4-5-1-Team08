@@ -14,11 +14,11 @@ public class SecurityConfig {
     SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
                 .csrf(AbstractHttpConfigurer::disable)
-                .authorizeHttpRequests(authorize -> authorize
-                        .requestMatchers("/api/**").permitAll()
+                .authorizeHttpRequests(auth -> auth
+                        .requestMatchers("v1/**").permitAll()
                         .anyRequest().authenticated()
-                )
-        ;
+                );
+
         return http.build();
     }
 }
