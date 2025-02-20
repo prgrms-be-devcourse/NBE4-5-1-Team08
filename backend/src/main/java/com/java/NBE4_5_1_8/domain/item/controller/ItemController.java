@@ -33,4 +33,11 @@ public class ItemController {
                 .toList(),
                 "상품 조회 성공");
     }
+
+    @GetMapping("/{itemId}")
+    public RsData<ItemForm> getItemById(@PathVariable Long itemId) {
+        Item item = itemService.findByItemId(itemId);
+
+        return RsData.success(new ItemForm(item), "상품 조회 성공");
+    }
 }
