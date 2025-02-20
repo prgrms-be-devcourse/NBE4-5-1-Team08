@@ -24,8 +24,8 @@ public class ItemController {
     }
 
     @GetMapping
-    public RsData<List<ItemDto>> getItem() {
-        List<Item> items = itemService.findAllItem();
+    public RsData<List<ItemDto>> getItemList() {
+        List<Item> items = itemService.getItemList();
         return RsData.success(
                 items
                 .stream()
@@ -36,8 +36,8 @@ public class ItemController {
 
     @GetMapping("/{itemId}")
     public RsData<ItemForm> getItemById(@PathVariable Long itemId) {
-        Item item = itemService.findByItemId(itemId);
+        Item item = itemService.getItemById(itemId);
 
-        return RsData.success(new ItemForm(item), "상품 조회 성공");
+        return RsData.success(new ItemForm(item), "상품 단건 조회 성공");
     }
 }
