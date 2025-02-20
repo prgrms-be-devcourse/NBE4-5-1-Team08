@@ -39,5 +39,4 @@ const ItemListPage = async () => {
         </div>
     );
 }
-
 export default ItemListPage;
