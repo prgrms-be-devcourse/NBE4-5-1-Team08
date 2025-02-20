@@ -9,6 +9,8 @@ import lombok.RequiredArgsConstructor;
 import org.hibernate.validator.constraints.Length;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.NoSuchElementException;
+
 @RestController
 @RequestMapping("/api/v1/orders")
 @RequiredArgsConstructor
@@ -17,18 +19,19 @@ public class ApiV1OrderInfoController {
     private final OrderInfoService orderInfoService;
 
     @PutMapping("/{orderId}")
-    public RsData<OrderInfo> updateOrderInfo(
-            @PathVariable long orderId,
-            @RequestBody @Valid UpdateReqBody updateReqBody
-    ) {
-        OrderInfo orderInfo = orderInfoService.getOrderById(orderId).get();
-        orderInfoService.updateOrderInfo(
-                orderInfo,
-                updateReqBody.orderStatus(),
-                updateReqBody.memberEmail(),
-                updateReqBody.memberAddress()
-        );
-        return RsData.success(orderInfo, "주문이 성공적으로 수정되었습니다.");
+    public RsData<OrderInfo> updateOrderInfo(@PathVariable long orderId, @RequestBody @Valid UpdateReqBody updateReqBody) {
+        try {
+            OrderInfo orderInfo = orderInfoService.getOrderById(orderId).get();
+            orderInfoService.updateOrderInfo(
+                    orderInfo,
+                    updateReqBody.orderStatus(),
+                    updateReqBody.memberEmail(),
+                    updateReqBody.memberAddress()
+            );
+            return RsData.success(orderInfo, "%d번 주문 수정이 완료되었습니다.".formatted(orderId));
+        } catch (NoSuchElementException e) {
+            return RsData.failure("%d번 주문 정보를 찾을 수 없습니다.".formatted(orderId));
+        }
     }
 
     // Update
