@@ -40,4 +40,10 @@ public class ItemController {
 
         return RsData.success(new ItemDto(item), "상품 단건 조회 성공");
     }
+
+    @PutMapping("/{itemId}")
+    public RsData<ItemDto> updateItem(@PathVariable Long itemId, @RequestBody ItemForm requestForm) {
+        Item item = itemService.updateItem(itemId, requestForm);
+        return RsData.success(new ItemDto(item), "상품 수정 성공");
+    }
 }
