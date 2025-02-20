@@ -28,4 +28,9 @@ public class ItemService {
     public List<Item> findAllItem() {
         return itemRepository.findAll();
     }
+
+    public Item findByItemId(Long itemId) {
+        return itemRepository.findByItemId(itemId)
+                .orElseThrow(() -> new IllegalArgumentException("해당 상품이 없습니다. id=" + itemId));
+    }
 }
