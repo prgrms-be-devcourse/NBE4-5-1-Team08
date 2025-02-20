@@ -1,11 +1,10 @@
 package com.java.NBE4_5_1_8.domain.item.dto;
 
 import com.java.NBE4_5_1_8.domain.item.entity.Item;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
-@Data
+@Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 public class ItemDto {
