@@ -4,6 +4,7 @@ import com.java.NBE4_5_1_8.domain.item.entity.Item;
 import com.java.NBE4_5_1_8.domain.item.repository.ItemRepository;
 import com.java.NBE4_5_1_8.domain.orderinfo.dto.OrderForm;
 import com.java.NBE4_5_1_8.domain.orderinfo.entity.OrderInfo;
+import com.java.NBE4_5_1_8.domain.orderinfo.entity.OrderStatus;
 import com.java.NBE4_5_1_8.domain.orderinfo.repository.OrderInfoRepository;
 import com.java.NBE4_5_1_8.domain.orderitem.entity.OrderItem;
 import com.java.NBE4_5_1_8.domain.orderitem.repository.OrderItemRepository;
@@ -11,6 +12,8 @@ import jakarta.persistence.EntityExistsException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -26,7 +29,7 @@ public class OrderInfoService {
 
         OrderInfo orderInfo = orderInfoRepository.findByMemberEmail(orderForm.getMemberEmail());
         if (orderInfo == null) {
-            orderInfo = OrderInfo.createOrderInfo(orderForm.getMemberEmail());
+            orderInfo = OrderInfo.createOrderInfo(orderForm.getMemberEmail(), orderForm.getMemberAddress());
             orderInfoRepository.save(orderInfo);
         }
 
@@ -34,5 +37,16 @@ public class OrderInfoService {
         OrderItem orderItem = OrderItem.createOrderItem(item, orderInfo, totalPrice, orderForm.getQuantity());
         orderItemRepository.save(orderItem);
         return orderItem.getId();
+    }
+
+    public Optional<OrderInfo> getOrderById(Long id) {
+        return orderInfoRepository.findById(id);
+    }
+
+    @Transactional
+    public void updateOrderInfo(OrderInfo orderInfo, OrderStatus orderStatus, String memberEmail, String memberAddress) {
+        orderInfo.setOrderStatus(orderStatus);
+        orderInfo.setMemberEmail(memberEmail);
+        orderInfo.setMemberAddress(memberAddress);
     }
 }
