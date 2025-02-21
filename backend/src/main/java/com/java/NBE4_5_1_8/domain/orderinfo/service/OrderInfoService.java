@@ -6,6 +6,7 @@ import com.java.NBE4_5_1_8.domain.orderinfo.dto.OrderForm;
 import com.java.NBE4_5_1_8.domain.orderinfo.entity.OrderInfo;
 import com.java.NBE4_5_1_8.domain.orderinfo.entity.OrderStatus;
 import com.java.NBE4_5_1_8.domain.orderinfo.repository.OrderInfoRepository;
+import com.java.NBE4_5_1_8.domain.orderitem.dto.OrderItemDto;
 import com.java.NBE4_5_1_8.domain.orderitem.entity.OrderItem;
 import com.java.NBE4_5_1_8.domain.orderitem.repository.OrderItemRepository;
 import jakarta.persistence.EntityExistsException;
@@ -13,7 +14,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -48,5 +51,13 @@ public class OrderInfoService {
         orderInfo.setOrderStatus(orderStatus);
         orderInfo.setMemberEmail(memberEmail);
         orderInfo.setMemberAddress(memberAddress);
+    }
+
+    public List<OrderItemDto> getOrderItem(String memberEmail) {
+        OrderInfo orderInfo = orderInfoRepository.findByMemberEmail(memberEmail);
+        return orderItemRepository.findAllByOrderInfo(orderInfo)
+                .stream()
+                .map(OrderItemDto::new)
+                .collect(Collectors.toList());
     }
 }
