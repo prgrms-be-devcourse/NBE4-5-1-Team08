@@ -14,11 +14,12 @@ import java.util.List;
 public class Item extends BaseTime {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private Long itemId;
     private String itemName;
     private String category;
     private String description; // 제품 설명
     private int stockQuantity;
+    private int price;
 
     @OneToMany(mappedBy = "item")
     private List<OrderItem> orderItems;

@@ -17,17 +17,21 @@ public class OrderInfo extends BaseTime {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long orderId;
-    private String orderStatus;
+
+    @Enumerated(EnumType.STRING)
+    private OrderStatus orderStatus;
+
     private String memberEmail;
     private String memberAddress;
 
     @OneToMany(mappedBy = "orderInfo")
     private List<OrderItem> orderItems = new ArrayList<>();
 
-    public static OrderInfo createOrderInfo(String memberEmail) {
+    public static OrderInfo createOrderInfo(String memberEmail, String memberAddress) {
         OrderInfo orderInfo = new OrderInfo();
-        orderInfo.setOrderStatus("장바구니");
+        orderInfo.setOrderStatus(OrderStatus.ORDERED);
         orderInfo.setMemberEmail(memberEmail);
+        orderInfo.setMemberAddress(memberAddress);
         return orderInfo;
     }
 }
