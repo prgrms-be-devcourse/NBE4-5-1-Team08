@@ -32,15 +32,11 @@ public class ApiV1OrderInfoController {
         try {
             OrderInfo orderInfo = orderInfoService.getOrderById(orderId).get();
 
-            // 정보가 제공된 경우에만 업데이트
-            String updatedEmail = updateReqBody.memberEmail() != null ? updateReqBody.memberEmail() : orderInfo.getMemberEmail();
-            String updatedAddress = updateReqBody.memberAddress() != null ? updateReqBody.memberAddress() : orderInfo.getMemberAddress();
-
             orderInfoService.updateOrderInfo(
                     orderInfo,
                     updateReqBody.orderStatus(),
-                    updatedEmail,
-                    updatedAddress
+                    updateReqBody.memberEmail,
+                    updateReqBody.memberAddress
             );
             return RsData.success(orderInfo, "%d번 주문 수정이 완료되었습니다.".formatted(orderId));
         } catch (NoSuchElementException e) {
@@ -48,7 +44,6 @@ public class ApiV1OrderInfoController {
         }
     }
 
-    // Update
     public record UpdateReqBody(
             @NotNull OrderStatus orderStatus,
             @Email String memberEmail,

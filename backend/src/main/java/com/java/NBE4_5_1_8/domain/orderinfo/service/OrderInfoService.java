@@ -39,18 +39,14 @@ public class OrderInfoService {
         return orderItem.getId();
     }
 
-    // orderId로 주문 정보 조회
     public Optional<OrderInfo> getOrderById(Long id) {
         return orderInfoRepository.findById(id); // 주문이 없으면 null 반환
     }
 
-    // Update
     @Transactional
     public void updateOrderInfo(OrderInfo orderInfo, OrderStatus orderStatus, String memberEmail, String memberAddress) {
         orderInfo.setOrderStatus(orderStatus);
         orderInfo.setMemberEmail(memberEmail);
         orderInfo.setMemberAddress(memberAddress);
-
-        orderInfoRepository.save(orderInfo);
     }
 }
