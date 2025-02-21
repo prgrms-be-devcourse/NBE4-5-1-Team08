@@ -4,6 +4,7 @@ import com.java.NBE4_5_1_8.domain.item.dto.ItemDto;
 import com.java.NBE4_5_1_8.domain.item.dto.ItemForm;
 import com.java.NBE4_5_1_8.domain.item.entity.Item;
 import com.java.NBE4_5_1_8.domain.item.service.ItemService;
+import com.java.NBE4_5_1_8.global.exception.ServiceException;
 import com.java.NBE4_5_1_8.global.response.RsData;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
@@ -36,7 +37,9 @@ public class ItemController {
 
     @GetMapping("/{itemId}")
     public RsData<ItemDto> getItemById(@PathVariable Long itemId) {
-        Item item = itemService.getItemById(itemId);
+
+        Item item = itemService.getItemById(itemId)
+                .orElseThrow(() -> new ServiceException("존재하지 않는 상품입니다."));
 
         return RsData.success(new ItemDto(item), "상품 단건 조회 성공");
     }

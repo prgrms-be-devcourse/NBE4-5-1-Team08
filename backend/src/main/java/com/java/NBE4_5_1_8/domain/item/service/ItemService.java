@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -29,9 +30,8 @@ public class ItemService {
         return itemRepository.findAll();
     }
 
-    public Item getItemById(Long itemId) {
-        return itemRepository.findById(itemId)
-                .orElseThrow(() -> new IllegalArgumentException("해당 상품이 없습니다. id=" + itemId));
+    public Optional<Item> getItemById(Long itemId) {
+        return itemRepository.findById(itemId);
     }
 
     public long count() {
