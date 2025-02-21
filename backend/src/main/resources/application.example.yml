@@ -21,3 +21,6 @@ server:
   port: 8080                                         # 애플리케이션 서버 포트
   servlet:
     context-path: /api
+
+frontend:
+  url: http://localhost:3000
