@@ -23,6 +23,7 @@ public class ItemService {
         item.setCategory(requestForm.getCategory());
         item.setDescription(requestForm.getDescription());
         item.setStockQuantity(requestForm.getStockQuantity());
+        item.setPrice(requestForm.getPrice());
 
         return itemRepository.save(item);
     }
@@ -47,6 +48,7 @@ public class ItemService {
         item.setCategory(requestForm.getCategory());
         item.setDescription(requestForm.getDescription());
         item.setStockQuantity(requestForm.getStockQuantity());
+        item.setPrice(requestForm.getPrice());
 
     }
 
