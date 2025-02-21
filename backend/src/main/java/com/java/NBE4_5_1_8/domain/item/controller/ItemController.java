@@ -46,7 +46,11 @@ public class ItemController {
 
     @PutMapping("/{itemId}")
     public RsData<ItemDto> updateItem(@PathVariable Long itemId, @RequestBody ItemForm requestForm) {
-        Item item = itemService.updateItem(itemId, requestForm);
+
+        Item item = itemService.getItemById(itemId)
+                .orElseThrow(() -> new ServiceException("존재하지 않는 상품입니다."));
+
+        itemService.updateItem(item, requestForm);
 
         return RsData.success(new ItemDto(item), "상품 수정 성공");
     }

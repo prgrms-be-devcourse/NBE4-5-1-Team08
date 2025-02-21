@@ -38,16 +38,14 @@ public class ItemService {
         return itemRepository.count();
     }
 
-    public Item updateItem(Long itemId, ItemForm requestForm) {
-        Item item = itemRepository.findById(itemId)
-                .orElseThrow(() -> new IllegalArgumentException("해당 상품이 없습니다. id=" + itemId));
+    @Transactional
+    public void updateItem(Item item, ItemForm requestForm) {
 
         item.setItemName(requestForm.getItemName());
         item.setCategory(requestForm.getCategory());
         item.setDescription(requestForm.getDescription());
         item.setStockQuantity(requestForm.getStockQuantity());
 
-        return itemRepository.save(item);
     }
 
     public void deleteItemById(Long itemId) {
