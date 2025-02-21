@@ -2,7 +2,7 @@ package com.java.NBE4_5_1_8.domain.orderinfo.service;
 
 import com.java.NBE4_5_1_8.domain.item.entity.Item;
 import com.java.NBE4_5_1_8.domain.item.repository.ItemRepository;
-import com.java.NBE4_5_1_8.domain.orderinfo.dto.OrderDto;
+import com.java.NBE4_5_1_8.domain.orderinfo.dto.OrderForm;
 import com.java.NBE4_5_1_8.domain.orderinfo.entity.OrderInfo;
 import com.java.NBE4_5_1_8.domain.orderinfo.repository.OrderInfoRepository;
 import com.java.NBE4_5_1_8.domain.orderitem.entity.OrderItem;
@@ -20,18 +20,18 @@ public class OrderInfoService {
     private final ItemRepository itemRepository;
 
     @Transactional
-    public Long addOrderInfo(OrderDto orderDto) {
-        Item item = itemRepository.findById(orderDto.getItemId())
+    public Long addOrderInfo(OrderForm orderForm) {
+        Item item = itemRepository.findById(orderForm.getItemId())
                 .orElseThrow(EntityExistsException::new);
 
-        OrderInfo orderInfo = orderInfoRepository.findByMemberEmail(orderDto.getMemberEmail());
+        OrderInfo orderInfo = orderInfoRepository.findByMemberEmail(orderForm.getMemberEmail());
         if (orderInfo == null) {
-            orderInfo = OrderInfo.createOrderInfo(orderDto.getMemberEmail());
+            orderInfo = OrderInfo.createOrderInfo(orderForm.getMemberEmail());
             orderInfoRepository.save(orderInfo);
         }
 
-        int totalPrice = item.getPrice() * orderDto.getQuantity();
-        OrderItem orderItem = OrderItem.createOrderItem(item, orderInfo, totalPrice, orderDto.getQuantity());
+        int totalPrice = item.getPrice() * orderForm.getQuantity();
+        OrderItem orderItem = OrderItem.createOrderItem(item, orderInfo, totalPrice, orderForm.getQuantity());
         orderItemRepository.save(orderItem);
         return orderItem.getId();
     }
