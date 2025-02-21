@@ -5,6 +5,7 @@ import com.java.NBE4_5_1_8.domain.item.entity.Item;
 import com.java.NBE4_5_1_8.domain.item.repository.ItemRepository;
 import com.java.NBE4_5_1_8.global.exception.ServiceException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -23,6 +24,7 @@ public class ItemService {
         item.setDescription(requestForm.getDescription());
         item.setStockQuantity(requestForm.getStockQuantity());
         item.setPrice(requestForm.getPrice());
+
         return itemRepository.save(item);
     }
 
@@ -32,7 +34,7 @@ public class ItemService {
 
     public Item getItemById(Long itemId) {
         return itemRepository.findById(itemId)
-                .orElseThrow(() -> new ServiceException("존재하지 않는 상품입니다."));
+                .orElseThrow(() -> new ServiceException(HttpStatus.BAD_REQUEST, "존재하지 않는 상품입니다."));
     }
 
     public long count() {
@@ -46,6 +48,7 @@ public class ItemService {
         item.setCategory(requestForm.getCategory());
         item.setDescription(requestForm.getDescription());
         item.setStockQuantity(requestForm.getStockQuantity());
+        item.setPrice(requestForm.getPrice());
 
     }
 
