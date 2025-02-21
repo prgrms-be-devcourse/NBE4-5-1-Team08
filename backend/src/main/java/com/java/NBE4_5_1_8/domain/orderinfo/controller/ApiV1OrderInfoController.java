@@ -49,4 +49,13 @@ public class ApiV1OrderInfoController {
             @Email String memberEmail,
             @Length(min = 3) String memberAddress) {
     }
+
+    @DeleteMapping("/{orderId}")
+    public RsData<OrderInfo> deleteOrderInfo(@PathVariable long orderId) {
+
+        OrderInfo orderInfo = orderInfoService.getOrderById(orderId).get();
+        orderInfoService.deleteOrderInfo(orderInfo);
+
+        return RsData.success(orderInfo, "%d번 주문이 삭제되었습니다.".formatted(orderId));
+    }
 }
