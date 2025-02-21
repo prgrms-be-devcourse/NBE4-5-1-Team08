@@ -15,17 +15,38 @@ public class ItemService {
     private final ItemRepository itemRepository;
 
     @Transactional
-    public Item createItem(ItemForm requestDto) {
+    public Item createItem(ItemForm requestForm) {
         Item item = new Item();
-        item.setItemName(requestDto.getItemName());
-        item.setCategory(requestDto.getCategory());
-        item.setDescription(requestDto.getDescription());
-        item.setStockQuantity(requestDto.getStockQuantity());
+        item.setItemName(requestForm.getItemName());
+        item.setCategory(requestForm.getCategory());
+        item.setDescription(requestForm.getDescription());
+        item.setStockQuantity(requestForm.getStockQuantity());
 
         return itemRepository.save(item);
     }
 
-    public List<Item> findAllItem() {
+    public List<Item> getItemList() {
         return itemRepository.findAll();
+    }
+
+    public Item getItemById(Long itemId) {
+        return itemRepository.findById(itemId)
+                .orElseThrow(() -> new IllegalArgumentException("해당 상품이 없습니다. id=" + itemId));
+    }
+
+    public long count() {
+        return itemRepository.count();
+    }
+
+    public Item updateItem(Long itemId, ItemForm requestForm) {
+        Item item = itemRepository.findById(itemId)
+                .orElseThrow(() -> new IllegalArgumentException("해당 상품이 없습니다. id=" + itemId));
+
+        item.setItemName(requestForm.getItemName());
+        item.setCategory(requestForm.getCategory());
+        item.setDescription(requestForm.getDescription());
+        item.setStockQuantity(requestForm.getStockQuantity());
+
+        return itemRepository.save(item);
     }
 }
