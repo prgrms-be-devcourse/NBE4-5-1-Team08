@@ -29,7 +29,7 @@ public class OrderInfo extends BaseTime {
 
     public static OrderInfo createOrderInfo(String memberEmail) {
         OrderInfo orderInfo = new OrderInfo();
-        orderInfo.setOrderStatus("장바구니");
+        orderInfo.setOrderStatus(OrderStatus.ORDERED);
         orderInfo.setMemberEmail(memberEmail);
         return orderInfo;
     }
