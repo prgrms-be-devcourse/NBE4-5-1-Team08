@@ -57,7 +57,12 @@ public class ItemController {
 
     @DeleteMapping("/{itemId}")
     public RsData<Void> deleteItemById(@PathVariable Long itemId) {
-        itemService.deleteItemById(itemId);
+
+        Item item = itemService.getItemById(itemId)
+                .orElseThrow(() -> new ServiceException("존재하지 않는 상품입니다."));
+
+        itemService.deleteItem(item);
+
         return RsData.success(null, "상품 삭제 성공");
     }
 
