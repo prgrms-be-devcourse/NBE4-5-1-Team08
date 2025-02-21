@@ -24,7 +24,7 @@ public class OrderInfo extends BaseTime {
     private String memberEmail;
     private String memberAddress;
 
-    @OneToMany(mappedBy = "orderInfo")
+    @OneToMany(mappedBy = "orderInfo", cascade = CascadeType.ALL)
     private List<OrderItem> orderItems = new ArrayList<>();
 
     public static OrderInfo createOrderInfo(String memberEmail, String memberAddress) {

@@ -49,4 +49,8 @@ public class OrderInfoService {
         orderInfo.setMemberEmail(memberEmail);
         orderInfo.setMemberAddress(memberAddress);
     }
+
+    public void deleteOrderInfo(OrderInfo orderInfo) {
+        orderInfoRepository.delete(orderInfo);
+    }
 }
