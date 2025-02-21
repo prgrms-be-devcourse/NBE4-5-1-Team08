@@ -20,7 +20,7 @@ public class OrderInfoService {
     private final ItemRepository itemRepository;
 
     @Transactional
-    public Long addOrderInfo(OrderForm orderForm) {
+    public Long createOrderInfo(OrderForm orderForm) {
         Item item = itemRepository.findById(orderForm.getItemId())
                 .orElseThrow(EntityExistsException::new);
 
