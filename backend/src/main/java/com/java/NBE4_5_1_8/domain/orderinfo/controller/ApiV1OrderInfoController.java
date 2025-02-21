@@ -5,6 +5,7 @@ import com.java.NBE4_5_1_8.domain.orderinfo.entity.OrderStatus;
 import com.java.NBE4_5_1_8.domain.orderinfo.service.OrderInfoService;
 import com.java.NBE4_5_1_8.global.response.RsData;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 import org.hibernate.validator.constraints.Length;
@@ -13,7 +14,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.NoSuchElementException;
 
 @RestController
-@RequestMapping("/api/v1/orders")
+@RequestMapping("/v1/orders")
 @RequiredArgsConstructor
 public class ApiV1OrderInfoController {
 
@@ -22,7 +23,7 @@ public class ApiV1OrderInfoController {
     // Update
     public record UpdateReqBody(
             @NotNull OrderStatus orderStatus,
-            @NotNull @Length(min = 3) String memberEmail,
+            @NotNull @Email String memberEmail,
             @NotNull @Length(min = 3) String memberAddress) {
     }
     @PutMapping("/{orderId}")

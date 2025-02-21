@@ -19,5 +19,7 @@ public class OrderInfoService {
         orderInfo.setOrderStatus(orderStatus);
         orderInfo.setMemberEmail(memberEmail);
         orderInfo.setMemberAddress(memberAddress);
+
+        orderInfoRepository.save(orderInfo);
     }
 }
