@@ -11,8 +11,7 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(ServiceException.class)
     public RsData<Void> ServiceExceptionHandle(ServiceException ex) {
 
-//        // 개발 모드에서만 작동되도록.
-//        if (AppConfig.isNotProd()) ex.printStackTrace();
+    ex.printStackTrace();
 
         return RsData.failure(ex.getMsg());
     }
