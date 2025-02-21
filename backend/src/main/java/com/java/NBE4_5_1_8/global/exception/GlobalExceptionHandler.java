@@ -2,6 +2,8 @@ package com.java.NBE4_5_1_8.global.exception;
 
 
 import com.java.NBE4_5_1_8.global.response.RsData;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -20,7 +22,7 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    public RsData<Void> handleMethodArgumentNotValidException(MethodArgumentNotValidException e) {
+    public ResponseEntity<RsData<Void>> handleMethodArgumentNotValidException(MethodArgumentNotValidException e) {
 
         e.printStackTrace();
 
@@ -30,7 +32,11 @@ public class GlobalExceptionHandler {
                 .sorted()
                 .collect(Collectors.joining("\n"));
 
-        return RsData.failure(message);
+        return ResponseEntity
+                .status(HttpStatus.BAD_REQUEST)
+                .body(
+                        RsData.failure(message)
+                );
     }
 
 
