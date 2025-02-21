@@ -9,4 +9,5 @@ public class OrderForm {
     private Long itemId;
     private int quantity;
     private String memberEmail;
+    private String memberAddress;
 }

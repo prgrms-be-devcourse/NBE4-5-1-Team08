@@ -27,10 +27,11 @@ public class OrderInfo extends BaseTime {
     @OneToMany(mappedBy = "orderInfo")
     private List<OrderItem> orderItems = new ArrayList<>();
 
-    public static OrderInfo createOrderInfo(String memberEmail) {
+    public static OrderInfo createOrderInfo(String memberEmail, String memberAddress) {
         OrderInfo orderInfo = new OrderInfo();
         orderInfo.setOrderStatus(OrderStatus.ORDERED);
         orderInfo.setMemberEmail(memberEmail);
+        orderInfo.setMemberAddress(memberAddress);
         return orderInfo;
     }
 }
