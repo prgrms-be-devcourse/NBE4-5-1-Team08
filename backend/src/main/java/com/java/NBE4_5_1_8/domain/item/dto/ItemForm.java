@@ -12,11 +12,13 @@ public class ItemForm {
     private String category;
     private String description;
     private int stockQuantity;
+    private int price;
 
     public ItemForm(Item item) {
         this.itemName = item.getItemName();
         this.category = item.getCategory();
         this.description = item.getDescription();
         this.stockQuantity = item.getStockQuantity();
+        this.price = item.getPrice();
     }
 }

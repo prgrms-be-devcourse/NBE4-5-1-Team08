@@ -34,9 +34,9 @@ public class BaseInitData {
         }
 
         // 샘플 아이템 데이터 생성
-        itemService.createItem(new ItemForm("Columbia Nariñó", "커피콩", "고소한 풍미의 콜롬비아 원두", 200));
-        itemService.createItem(new ItemForm("Brazil Serra Do Caparaó", "커피콩", "밸런스 좋은 브라질 원두", 200));
-        itemService.createItem(new ItemForm("Columbia Nariñó", "커피콩", "산미가 조화로운 콜롬비아 원두", 200));
+        itemService.createItem(new ItemForm("Columbia Nariñó", "커피콩", "고소한 풍미의 콜롬비아 원두", 200, 5000));
+        itemService.createItem(new ItemForm("Brazil Serra Do Caparaó", "커피콩", "밸런스 좋은 브라질 원두", 200, 5000));
+        itemService.createItem(new ItemForm("Columbia Nariñó", "커피콩", "산미가 조화로운 콜롬비아 원두", 200, 5000));
 
     }
 }

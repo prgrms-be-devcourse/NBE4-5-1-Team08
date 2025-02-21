@@ -19,6 +19,7 @@ public class Item extends BaseTime {
     private String category;
     private String description; // 제품 설명
     private int stockQuantity;
+    private int price;
 
     @OneToMany(mappedBy = "item")
     private List<OrderItem> orderItems;
