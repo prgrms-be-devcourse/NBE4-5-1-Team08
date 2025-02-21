@@ -5,7 +5,7 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class OrderDto {
+public class OrderForm {
     private Long itemId;
     private int quantity;
     private String memberEmail;
