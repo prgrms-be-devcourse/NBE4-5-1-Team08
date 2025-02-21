@@ -12,17 +12,17 @@ import client from "@/app/api/client";
 
 type ItemFormProps = {
     itemFormProps?: {
-        itemId?: number;
         itemName?: string;
         category?: string;
         description?: string;
         stockQuantity?: number;
     };
+    itemId?: number;
     isEditMode: boolean;
 };
 
 
-const ItemForm = ({itemFormProps, isEditMode}: ItemFormProps) => {
+const ItemForm = ({itemFormProps, isEditMode, itemId}: ItemFormProps) => {
     const router = useRouter();
     const [formData, setFormData] = useState({
         itemName: itemFormProps?.itemName ?? "",
@@ -35,11 +35,23 @@ const ItemForm = ({itemFormProps, isEditMode}: ItemFormProps) => {
         setFormData({...formData, [e.target.name]: e.target.value});
     };
 
+    const handleDelete = async (e: { preventDefault: () => void }) => {
+        e.preventDefault();
+        if (confirm('삭제하시겠습니까?')) {
+            await client.DELETE('/v1/items/{itemId}', {
+                params: {path: {itemId: itemId!}},
+            })
+            router.push("/admin/items");
+        }
+    }
+
     const handleSubmit = async (e: { preventDefault: () => void; }) => {
         e.preventDefault();
-
         if (isEditMode) {
-            console.log(formData);
+            await client.PUT('/v1/items/{itemId}', {
+                params: {path: {itemId: itemId!}},
+                body: formData,
+            })
         } else {
             await client.POST(`/v1/items`, {
                 body: formData,
@@ -88,8 +100,8 @@ const ItemForm = ({itemFormProps, isEditMode}: ItemFormProps) => {
                         </div>
                     </CardContent>
                     <CardFooter className="flex justify-between">
-                        <Button variant="outline">취소</Button>
-                        <Button type={"submit"}>등록</Button>
+                        <Button type="submit" className="bg-blue-500">{isEditMode ? '수정' : '등록'}</Button>
+                        {isEditMode && <Button onClick={handleDelete} className="bg-red-500">삭제</Button>}
                     </CardFooter>
                 </form>
             </Card>
