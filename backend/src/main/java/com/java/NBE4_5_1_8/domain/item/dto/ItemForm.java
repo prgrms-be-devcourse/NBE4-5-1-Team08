@@ -22,14 +22,13 @@ public class ItemForm {
 
     @NotBlank(message = "상품 설명은 필수 입력 항목입니다.")
     private String description;
-    private int stockQuantity;
-    private int price;
 
-    public ItemForm(Item item) {
-        this.itemName = item.getItemName();
-        this.category = item.getCategory();
-        this.description = item.getDescription();
-        this.stockQuantity = item.getStockQuantity();
-        this.price = item.getPrice();
-    }
+    @Min(value = 0, message = "재고 수량은 0 이상이여야 합니다.")
+    @NotNull(message = "재고 수량은 필수 입력 항목입니다.")
+    private Integer stockQuantity;
+
+    @Min(value = 0, message = "가격은 0 이상이여야 합니다.")
+    @NotNull(message = "가격은 필수 입력 항목입니다.")
+    private Integer price;
+
 }
