@@ -48,4 +48,10 @@ public class ItemController {
         return RsData.success(new ItemDto(item), "상품 수정 성공");
     }
 
+    @DeleteMapping("/{itemId}")
+    public RsData<Void> deleteItemById(@PathVariable Long itemId) {
+        itemService.deleteItemById(itemId);
+        return RsData.success(null, "상품 삭제 성공");
+    }
+
 }
