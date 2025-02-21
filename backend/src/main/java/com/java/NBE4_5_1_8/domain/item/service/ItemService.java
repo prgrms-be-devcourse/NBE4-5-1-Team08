@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -29,31 +30,25 @@ public class ItemService {
         return itemRepository.findAll();
     }
 
-    public Item getItemById(Long itemId) {
-        return itemRepository.findById(itemId)
-                .orElseThrow(() -> new IllegalArgumentException("해당 상품이 없습니다. id=" + itemId));
+    public Optional<Item> getItemById(Long itemId) {
+        return itemRepository.findById(itemId);
     }
 
     public long count() {
         return itemRepository.count();
     }
 
-    public Item updateItem(Long itemId, ItemForm requestForm) {
-        Item item = itemRepository.findById(itemId)
-                .orElseThrow(() -> new IllegalArgumentException("해당 상품이 없습니다. id=" + itemId));
+    @Transactional
+    public void updateItem(Item item, ItemForm requestForm) {
 
         item.setItemName(requestForm.getItemName());
         item.setCategory(requestForm.getCategory());
         item.setDescription(requestForm.getDescription());
         item.setStockQuantity(requestForm.getStockQuantity());
 
-        return itemRepository.save(item);
     }
 
-    public void deleteItemById(Long itemId) {
-        itemRepository.findById(itemId)
-                .orElseThrow(() -> new IllegalArgumentException("해당 상품이 없습니다. id=" + itemId));
-
-        itemRepository.deleteById(itemId);
+    public void deleteItem(Item item) {
+        itemRepository.delete(item);
     }
 }
