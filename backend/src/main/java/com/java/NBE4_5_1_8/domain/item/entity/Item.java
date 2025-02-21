@@ -1,6 +1,6 @@
 package com.java.NBE4_5_1_8.domain.item.entity;
 
-import com.java.NBE4_5_1_8.domain.orderitem.OrderItem;
+import com.java.NBE4_5_1_8.domain.orderitem.entity.OrderItem;
 import com.java.NBE4_5_1_8.global.entity.BaseTime;
 import jakarta.persistence.*;
 import lombok.Getter;
