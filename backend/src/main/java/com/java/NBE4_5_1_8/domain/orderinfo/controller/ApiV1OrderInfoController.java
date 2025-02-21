@@ -52,10 +52,12 @@ public class ApiV1OrderInfoController {
 
     @DeleteMapping("/{orderId}")
     public RsData<OrderInfo> deleteOrderInfo(@PathVariable long orderId) {
-
-        OrderInfo orderInfo = orderInfoService.getOrderById(orderId).get();
-        orderInfoService.deleteOrderInfo(orderInfo);
-
-        return RsData.success(orderInfo, "%d번 주문이 삭제되었습니다.".formatted(orderId));
+        try {
+            OrderInfo orderInfo = orderInfoService.getOrderById(orderId).get();
+            orderInfoService.deleteOrderInfo(orderInfo);
+            return RsData.success(orderInfo, "%d번 주문이 삭제되었습니다.".formatted(orderId));
+        } catch (NoSuchElementException e) {
+            return RsData.failure("%d번 주문 정보를 찾을 수 없습니다.".formatted(orderId));
+        }
     }
 }
