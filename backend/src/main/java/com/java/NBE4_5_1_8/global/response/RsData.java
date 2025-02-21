@@ -14,6 +14,10 @@ public class RsData<T> {
     private String message;
     private T data;
 
+    public static <T> ResponseEntity<RsData<T>> success(HttpStatus status, String message) {
+        return success(status, null, message);
+    }
+
     public static <T> ResponseEntity<RsData<T>> success(HttpStatus status, T data, String message) {
         return ResponseEntity
                 .status(status)
@@ -23,7 +27,6 @@ public class RsData<T> {
     public static <T> ResponseEntity<RsData<T>> failure(HttpStatus status, String message) {
         return ResponseEntity
                 .status(status)
-                .body(new RsData<>(false,  message, null));
+                .body(new RsData<>(false, message, null));
     }
-
 }
