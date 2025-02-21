@@ -49,4 +49,11 @@ public class ItemService {
 
         return itemRepository.save(item);
     }
+
+    public void deleteItemById(Long itemId) {
+        itemRepository.findById(itemId)
+                .orElseThrow(() -> new IllegalArgumentException("해당 상품이 없습니다. id=" + itemId));
+
+        itemRepository.deleteById(itemId);
+    }
 }
