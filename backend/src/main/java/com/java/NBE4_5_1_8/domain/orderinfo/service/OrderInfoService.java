@@ -40,7 +40,7 @@ public class OrderInfoService {
     }
 
     public Optional<OrderInfo> getOrderById(Long id) {
-        return orderInfoRepository.findById(id); // 주문이 없으면 null 반환
+        return orderInfoRepository.findById(id);
     }
 
     @Transactional
