@@ -11,7 +11,6 @@ import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 import org.hibernate.validator.constraints.Length;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -22,7 +21,7 @@ public class ApiV1OrderInfoController {
     private final OrderInfoService orderInfoService;
 
     @PostMapping
-    public ResponseEntity<RsData<Long>> createOrder(@RequestBody OrderForm orderForm) {
+    public RsData<Long> createOrder(@RequestBody OrderForm orderForm) {
         Long orderItemId = orderInfoService.createOrderInfo(orderForm);
         return RsData.success(
                 HttpStatus.CREATED,
@@ -31,7 +30,7 @@ public class ApiV1OrderInfoController {
     }
 
     @PutMapping("/{orderId}")
-    public ResponseEntity<RsData<OrderInfo>> updateOrderInfo(@PathVariable long orderId, @RequestBody @Valid UpdateReqBody updateReqBody) {
+    public RsData<OrderInfo> updateOrderInfo(@PathVariable long orderId, @RequestBody @Valid UpdateReqBody updateReqBody) {
         OrderInfo orderInfo = orderInfoService.getOrderById(orderId);
         orderInfoService.updateOrderInfo(
                 orderInfo,
@@ -51,7 +50,7 @@ public class ApiV1OrderInfoController {
     }
 
     @DeleteMapping("/{orderId}")
-    public ResponseEntity<RsData<Void>> deleteOrderInfo(@PathVariable long orderId) {
+    public RsData<Void> deleteOrderInfo(@PathVariable long orderId) {
         OrderInfo orderInfo = orderInfoService.getOrderById(orderId);
         orderInfoService.deleteOrderInfo(orderInfo);
         return RsData.success(
