@@ -10,26 +10,21 @@ import org.springframework.http.HttpStatus;
 @Data
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class RsData<T> {
-    private String code;
+    private HttpStatus status;
     private boolean success;
     private String message;
     private T data;
 
-    public static <T> RsData<T> success(String code, String message) {
-        return new RsData<>(code, true, message, null);
+    public static <T> RsData<T> success(HttpStatus status, String message) {
+        return new RsData<>(status, true, message, null);
     }
 
-    public static <T> RsData<T> success(String code, T data, String message) {
-        return new RsData<>(code, true, message, data);
+    public static <T> RsData<T> success(HttpStatus status, T data, String message) {
+        return new RsData<>(status, true, message, data);
     }
 
-    public static <T> RsData<T> failure(String code, String message) {
-        return new RsData<>(code, false, message, null);
-    }
-
-    @JsonIgnore
-    public int getStatusCode() {
-        return Integer.parseInt(code);
+    public static <T> RsData<T> failure(HttpStatus status, String message) {
+        return new RsData<>(status, false, message, null);
     }
 
 }
