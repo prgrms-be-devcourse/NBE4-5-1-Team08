@@ -8,12 +8,12 @@ import com.java.NBE4_5_1_8.domain.orderinfo.entity.OrderStatus;
 import com.java.NBE4_5_1_8.domain.orderinfo.repository.OrderInfoRepository;
 import com.java.NBE4_5_1_8.domain.orderitem.entity.OrderItem;
 import com.java.NBE4_5_1_8.domain.orderitem.repository.OrderItemRepository;
+import com.java.NBE4_5_1_8.global.exception.ServiceException;
 import jakarta.persistence.EntityExistsException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -39,8 +39,9 @@ public class OrderInfoService {
         return orderItem.getId();
     }
 
-    public Optional<OrderInfo> getOrderById(Long id) {
-        return orderInfoRepository.findById(id);
+    public OrderInfo getOrderById(Long id) {
+        return orderInfoRepository.findById(id)
+                .orElseThrow(() -> new ServiceException(HttpStatus.BAD_REQUEST, "존재하지 않는 주문입니다."));
     }
 
     @Transactional
