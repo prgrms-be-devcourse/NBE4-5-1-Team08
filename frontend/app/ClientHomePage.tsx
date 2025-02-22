@@ -9,6 +9,8 @@ import {Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger} from "@/comp
 import {Input} from "@/components/ui/input";
 import Link from "next/link";
 import {CartItem} from "@/type/CartItem";
+import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
+import {faCartPlus, faCartShopping} from "@fortawesome/free-solid-svg-icons";
 
 
 type ItemDto = components["schemas"]["ItemDto"];
@@ -17,7 +19,7 @@ const HomeClientPage = ({itemList}: { itemList: ItemDto[] }) => {
     const [quantity, setQuantity] = useState<number>(1);
     const [openDialog, setOpenDialog] = useState<boolean>(false);
     const [openSheet, setOpenSheet] = useState<boolean>(false);
-    const [cartItems, setCartItems] = useState<CartItem[]>([]);
+    const [cartItemList, setCartItemList] = useState<CartItem[]>([]);
 
     const getCart = useCallback(() => {
         return JSON.parse(localStorage.getItem("cart") || "[]") as CartItem[];
@@ -37,7 +39,7 @@ const HomeClientPage = ({itemList}: { itemList: ItemDto[] }) => {
             cart.push(product);
         }
         localStorage.setItem("cart", JSON.stringify(cart));
-        setCartItems(getCart());
+        setCartItemList(getCart());
         setOpenDialog(false);
     };
 
@@ -47,16 +49,17 @@ const HomeClientPage = ({itemList}: { itemList: ItemDto[] }) => {
         const updatedCart = cart.filter((item) => item.itemId !== itemId);
 
         localStorage.setItem("cart", JSON.stringify(updatedCart));
-        setCartItems(updatedCart);
+        setCartItemList(updatedCart);
     };
 
     useEffect(() => {
-        setCartItems(getCart());
+        setCartItemList(getCart());
     }, [getCart])
 
 
     return (
         <div className="p-4">
+            {/*TODO select 박스로 바꾸고 itemList 도 filter 해주도록*/}
             <div className="mb-4">category</div>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
@@ -110,20 +113,23 @@ const HomeClientPage = ({itemList}: { itemList: ItemDto[] }) => {
             {/*sheet area*/}
             <Sheet>
                 <SheetTrigger asChild>
-                    <Button onClick={() => setOpenSheet(!openSheet)} variant={"outline"}>장바구니</Button>
+                    <Button className={"rounded-full w-14 h-14 fixed bottom-20 right-5"}
+                            onClick={() => setOpenSheet(!openSheet)} variant={"outline"}>
+                        <FontAwesomeIcon icon={cartItemList.length > 0 ? faCartPlus : faCartShopping}/>
+                    </Button>
                 </SheetTrigger>
                 <SheetContent>
                     <SheetHeader>
                         <SheetTitle>장바구니</SheetTitle>
                     </SheetHeader>
                     <div className="mt-5 flex flex-col gap-2">
-                        {cartItems.length > 0 ? (
-                            cartItems.map((item) => (
-                                <div key={item.itemId} className="grid grid-cols-4 items-center gap-4">
+                        {cartItemList.length > 0 ? (
+                            cartItemList.map((item) => (
+                                <div key={item.itemId} className="grid grid-cols-4 items-center gap-4 w-full">
                                     <p>{item.itemName}</p>
                                     <p>{item.quantity}개</p>
                                     <p>{item.price * item.quantity}원</p>
-                                    <Button variant="destructive" size="sm" onClick={() => deleteFromCart(item.itemId)}>
+                                    <Button variant="destructive" onClick={() => deleteFromCart(item.itemId)}>
                                         삭제
                                     </Button>
                                 </div>
@@ -133,13 +139,15 @@ const HomeClientPage = ({itemList}: { itemList: ItemDto[] }) => {
                         )}
                     </div>
                     <div className={"flex justify-between mt-5"}>
-                        {cartItems.length > 0 &&
-                            <>
-                                <div>계 {cartItems.length > 0 ? cartItems.reduce((sum, item) => sum + item.quantity * item.price, 0) : 0} 원</div>
+                        {cartItemList.length > 0 &&
+                            <div className="grid grid-cols-4 items-center gap-4 w-full">
+                                <div></div>
+                                <div></div>
+                                <p>{cartItemList.length > 0 ? cartItemList.reduce((sum, item) => sum + item.quantity * item.price, 0) : 0} 원</p>
                                 <Link href={"/checkout"}>
-                                    <Button type={"submit"} variant={"outline"}>주문</Button>
+                                    <Button className={"w-full"} type={"submit"}>주문</Button>
                                 </Link>
-                            </>
+                            </div>
                         }
                     </div>
                 </SheetContent>

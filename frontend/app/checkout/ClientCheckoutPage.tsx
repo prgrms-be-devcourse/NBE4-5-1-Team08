@@ -65,8 +65,8 @@ const ClientCheckoutPage = () => {
                     <Table>
                         <TableHeader>
                             <TableRow>
-                                <TableHead className="w-[100px]">상품명</TableHead>
-                                <TableHead>수량</TableHead>
+                                <TableHead>상품명</TableHead>
+                                <TableHead className={"text-right"}>수량</TableHead>
                                 <TableHead className="text-right">가격</TableHead>
                             </TableRow>
                         </TableHeader>
@@ -74,7 +74,7 @@ const ClientCheckoutPage = () => {
                             {cartItems.map((cartItem) => (
                                 <TableRow key={cartItem.itemId}>
                                     <TableCell className="font-medium">{cartItem.itemName}</TableCell>
-                                    <TableCell>{cartItem.quantity}</TableCell>
+                                    <TableCell className={"text-right"}>{cartItem.quantity}</TableCell>
                                     <TableCell className="text-right">{cartItem.quantity * cartItem.price}</TableCell>
                                 </TableRow>
                             ))}
@@ -133,10 +133,9 @@ const ClientCheckoutPage = () => {
                                         <FormMessage/>
                                     </FormItem>
                                 )}/>
-
-                                <Button type="submit" className="w-full">
-                                    주문하기
-                                </Button>
+                                <div className={"flex justify-center mt-5"}>
+                                    <Button type="submit" className="w-1/3">주문하기</Button>
+                                </div>
                             </form>
                         </Form>
                     </div>
