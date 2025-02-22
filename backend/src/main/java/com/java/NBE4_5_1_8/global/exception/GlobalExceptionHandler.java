@@ -13,11 +13,19 @@ import java.util.stream.Collectors;
 public class GlobalExceptionHandler {
 
     @ExceptionHandler(ServiceException.class)
-    public ResponseEntity<RsData<Void>> ServiceExceptionHandle(ServiceException e) {
+    public ResponseEntity<RsData<?>> ServiceExceptionHandle(ServiceException e) {
 
         e.printStackTrace();
 
-        return RsData.failure(e.getStatus(), e.getMessage());
+        return ResponseEntity
+                .status(e.getStatusCode())
+                .body(
+                        RsData.failure(
+                                e.getStatusCode(),
+                                e.getMessage()
+                        )
+                );
+
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
@@ -27,10 +35,17 @@ public class GlobalExceptionHandler {
 
         String message = e.getBindingResult().getFieldErrors()
                 .stream()
-                .map(fe -> fe.getField() + " : " + fe.getCode() + " : " + fe.getDefaultMessage())
+                .map(fieldError -> fieldError.getField() + " : " + fieldError.getCode() + " : " + fieldError.getDefaultMessage())
                 .sorted()
                 .collect(Collectors.joining("\n"));
 
-        return RsData.failure(HttpStatus.BAD_REQUEST, message);
+        return ResponseEntity
+                .status(e.getStatusCode())
+                .body(
+                        RsData.failure(
+                                HttpStatus.BAD_REQUEST,
+                                message
+                        )
+                );
     }
 }
