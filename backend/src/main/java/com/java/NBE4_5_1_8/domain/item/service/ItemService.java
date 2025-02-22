@@ -25,6 +25,7 @@ public class ItemService {
         item.setDescription(requestForm.getDescription());
         item.setStockQuantity(requestForm.getStockQuantity());
         item.setPrice(requestForm.getPrice());
+        item.setImageUrl(requestForm.getImageUrl());
 
         return itemRepository.save(item);
     }
@@ -50,6 +51,7 @@ public class ItemService {
         item.setDescription(requestForm.getDescription());
         item.setStockQuantity(requestForm.getStockQuantity());
         item.setPrice(requestForm.getPrice());
+        item.setImageUrl(requestForm.getImageUrl());
 
     }
 
