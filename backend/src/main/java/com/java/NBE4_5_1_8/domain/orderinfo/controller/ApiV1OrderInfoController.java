@@ -4,7 +4,6 @@ import com.java.NBE4_5_1_8.domain.orderinfo.dto.OrderForm;
 import com.java.NBE4_5_1_8.domain.orderinfo.entity.OrderInfo;
 import com.java.NBE4_5_1_8.domain.orderinfo.entity.OrderStatus;
 import com.java.NBE4_5_1_8.domain.orderinfo.service.OrderInfoService;
-import com.java.NBE4_5_1_8.domain.orderitem.dto.OrderItemDto;
 import com.java.NBE4_5_1_8.global.response.RsData;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Email;
@@ -14,9 +13,6 @@ import org.hibernate.validator.constraints.Length;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
-import java.util.NoSuchElementException;
 
 @RestController
 @RequestMapping("/v1/orders")
@@ -34,31 +30,18 @@ public class ApiV1OrderInfoController {
                 "장바구니에 성공적으로 담았습니다.");
     }
 
-    @GetMapping
-    public RsData<List<OrderItemDto>> getOrderItems(@RequestParam String memberEmail) {
-        List<OrderItemDto> orderItemList = orderInfoService.getOrderItem(memberEmail);
-        return RsData.success(orderItemList, "장바구니 목록 조회 성공");
-    }
-
     @PutMapping("/{orderId}")
     public ResponseEntity<RsData<OrderInfo>> updateOrderInfo(@PathVariable long orderId, @RequestBody @Valid UpdateReqBody updateReqBody) {
-        try {
-            OrderInfo orderInfo = orderInfoService.getOrderById(orderId).get();
-
-            orderInfoService.updateOrderInfo(
-                    orderInfo,
-                    updateReqBody.orderStatus(),
-                    updateReqBody.memberEmail,
-                    updateReqBody.memberAddress
-            );
-            return RsData.success(HttpStatus.OK,
-                    orderInfo,
-                    "%d번 주문 수정이 완료되었습니다.".formatted(orderId));
-        } catch (NoSuchElementException e) {
-            return RsData.failure(
-                    HttpStatus.NOT_FOUND,
-                    "%d번 주문 정보를 찾을 수 없습니다.".formatted(orderId));
-        }
+        OrderInfo orderInfo = orderInfoService.getOrderById(orderId);
+        orderInfoService.updateOrderInfo(
+                orderInfo,
+                updateReqBody.orderStatus(),
+                updateReqBody.memberEmail,
+                updateReqBody.memberAddress
+        );
+        return RsData.success(HttpStatus.OK,
+                orderInfo,
+                "%d번 주문 수정이 완료되었습니다.".formatted(orderId));
     }
 
     public record UpdateReqBody(
@@ -69,16 +52,10 @@ public class ApiV1OrderInfoController {
 
     @DeleteMapping("/{orderId}")
     public ResponseEntity<RsData<Void>> deleteOrderInfo(@PathVariable long orderId) {
-        try {
-            OrderInfo orderInfo = orderInfoService.getOrderById(orderId).get();
-            orderInfoService.deleteOrderInfo(orderInfo);
-            return RsData.success(
-                    HttpStatus.OK,
-                    "%d번 주문이 삭제되었습니다.".formatted(orderId));
-        } catch (NoSuchElementException e) {
-            return RsData.failure(
-                    HttpStatus.NOT_FOUND,
-                    "%d번 주문 정보를 찾을 수 없습니다.".formatted(orderId));
-        }
+        OrderInfo orderInfo = orderInfoService.getOrderById(orderId);
+        orderInfoService.deleteOrderInfo(orderInfo);
+        return RsData.success(
+                HttpStatus.OK,
+                "%d번 주문이 삭제되었습니다.".formatted(orderId));
     }
 }
