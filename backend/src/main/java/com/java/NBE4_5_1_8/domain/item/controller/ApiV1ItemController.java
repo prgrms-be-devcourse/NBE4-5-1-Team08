@@ -25,7 +25,7 @@ public class ApiV1ItemController {
         Item item = itemService.createItem(requestForm);
 
         return RsData.success(
-                "200",
+                HttpStatus.OK,
                 new ItemDto(item),
                 "상품 등록 성공");
     }
@@ -34,7 +34,7 @@ public class ApiV1ItemController {
     public RsData<List<ItemDto>> getItemList() {
         List<Item> items = itemService.getItemList();
         return RsData.success(
-                "200",
+                HttpStatus.OK,
                 items.stream()
                         .map(ItemDto::new)
                         .toList(),
@@ -47,10 +47,9 @@ public class ApiV1ItemController {
         Item item = itemService.getItemById(itemId);
 
         return RsData.success(
-                "200",
+                HttpStatus.OK,
                 new ItemDto(item),
                 "상품 단건 조회 성공");
-
 
     }
 
@@ -61,7 +60,7 @@ public class ApiV1ItemController {
         itemService.updateItem(item, requestForm);
 
         return RsData.success(
-                "200",
+                HttpStatus.OK,
                 new ItemDto(item),
                 "상품 수정 성공");
     }
@@ -73,7 +72,7 @@ public class ApiV1ItemController {
         itemService.deleteItem(item);
 
         return RsData.success(
-                "200",
+                HttpStatus.OK,
                 "상품 삭제 성공");
     }
 }
