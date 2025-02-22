@@ -35,7 +35,7 @@ public class ApiV1OrderInfoController {
     @PutMapping("/{orderId}")
     public ResponseEntity<RsData<OrderInfo>> updateOrderInfo(@PathVariable long orderId, @RequestBody @Valid UpdateReqBody updateReqBody) {
         try {
-            OrderInfo orderInfo = orderInfoService.getOrderById(orderId).get();
+            OrderInfo orderInfo = orderInfoService.getOrderById(orderId);
 
             orderInfoService.updateOrderInfo(
                     orderInfo,
@@ -62,7 +62,7 @@ public class ApiV1OrderInfoController {
     @DeleteMapping("/{orderId}")
     public ResponseEntity<RsData<Void>> deleteOrderInfo(@PathVariable long orderId) {
         try {
-            OrderInfo orderInfo = orderInfoService.getOrderById(orderId).get();
+            OrderInfo orderInfo = orderInfoService.getOrderById(orderId);
             orderInfoService.deleteOrderInfo(orderInfo);
             return RsData.success(
                     HttpStatus.OK,
