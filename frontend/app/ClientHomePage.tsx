@@ -1,20 +1,14 @@
 'use client';
 
-import {useState} from "react";
+import {useCallback, useEffect, useState} from "react";
 import {Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle} from "@/components/ui/card";
 import {Dialog, DialogContent, DialogDescription, DialogFooter, DialogTitle} from "@/components/ui/dialog";
 import {Button} from "@/components/ui/button";
 import {components} from "@/lib/api/schema";
-import {
-    Sheet,
-    SheetClose,
-    SheetContent,
-    SheetFooter,
-    SheetHeader,
-    SheetTitle,
-    SheetTrigger
-} from "@/components/ui/sheet";
+import {Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger} from "@/components/ui/sheet";
 import {Input} from "@/components/ui/input";
+import Link from "next/link";
+import {CartItem} from "@/type/CartItem";
 
 
 type ItemDto = components["schemas"]["ItemDto"];
@@ -25,19 +19,15 @@ const HomeClientPage = ({itemList}: { itemList: ItemDto[] }) => {
     const [openSheet, setOpenSheet] = useState<boolean>(false);
     const [cartItems, setCartItems] = useState<CartItem[]>([]);
 
-
-    type CartItem = {
-        itemId: number;
-        itemName: string;
-        quantity: number;
-        price: number;
-    };
-
-    const getCart = () => {
+    const getCart = useCallback(() => {
         return JSON.parse(localStorage.getItem("cart") || "[]") as CartItem[];
-    }
+    }, []);
 
     const addToCart = (product: CartItem): void => {
+        if (quantity < 1) {
+            alert("1개 이상 주문해야합니다.");
+            return;
+        }
         const cart: CartItem[] = JSON.parse(localStorage.getItem("cart") || "[]");
 
         const existingItem = cart.find((item) => item.itemId === product.itemId);
@@ -59,6 +49,10 @@ const HomeClientPage = ({itemList}: { itemList: ItemDto[] }) => {
         localStorage.setItem("cart", JSON.stringify(updatedCart));
         setCartItems(updatedCart);
     };
+
+    useEffect(() => {
+        setCartItems(getCart());
+    }, [getCart])
 
 
     return (
@@ -138,11 +132,16 @@ const HomeClientPage = ({itemList}: { itemList: ItemDto[] }) => {
                             <p className="text-center text-gray-500">장바구니가 비어 있습니다.</p>
                         )}
                     </div>
-                    <SheetFooter>
-                        <SheetClose asChild>
-                            {cartItems.length > 0 && <Button type={"submit"} variant={"outline"}>주문</Button>}
-                        </SheetClose>
-                    </SheetFooter>
+                    <div className={"flex justify-between mt-5"}>
+                        {cartItems.length > 0 &&
+                            <>
+                                <div>계 {cartItems.length > 0 ? cartItems.reduce((sum, item) => sum + item.quantity * item.price, 0) : 0} 원</div>
+                                <Link href={"/checkout"}>
+                                    <Button type={"submit"} variant={"outline"}>주문</Button>
+                                </Link>
+                            </>
+                        }
+                    </div>
                 </SheetContent>
             </Sheet>
         </div>
