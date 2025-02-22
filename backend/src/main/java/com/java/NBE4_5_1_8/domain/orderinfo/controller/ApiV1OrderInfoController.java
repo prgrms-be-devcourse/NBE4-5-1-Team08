@@ -11,10 +11,7 @@ import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 import org.hibernate.validator.constraints.Length;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.NoSuchElementException;
 
 @RestController
 @RequestMapping("/v1/orders")
@@ -24,7 +21,7 @@ public class ApiV1OrderInfoController {
     private final OrderInfoService orderInfoService;
 
     @PostMapping
-    public ResponseEntity<RsData<Long>> createOrder(@RequestBody OrderForm orderForm) {
+    public RsData<Long> createOrder(@RequestBody OrderForm orderForm) {
         Long orderItemId = orderInfoService.createOrderInfo(orderForm);
         return RsData.success(
                 HttpStatus.CREATED,
@@ -33,24 +30,17 @@ public class ApiV1OrderInfoController {
     }
 
     @PutMapping("/{orderId}")
-    public ResponseEntity<RsData<OrderInfo>> updateOrderInfo(@PathVariable long orderId, @RequestBody @Valid UpdateReqBody updateReqBody) {
-        try {
-            OrderInfo orderInfo = orderInfoService.getOrderById(orderId).get();
-
-            orderInfoService.updateOrderInfo(
-                    orderInfo,
-                    updateReqBody.orderStatus(),
-                    updateReqBody.memberEmail,
-                    updateReqBody.memberAddress
-            );
-            return RsData.success(HttpStatus.OK,
-                    orderInfo,
-                    "%d번 주문 수정이 완료되었습니다.".formatted(orderId));
-        } catch (NoSuchElementException e) {
-            return RsData.failure(
-                    HttpStatus.NOT_FOUND,
-                    "%d번 주문 정보를 찾을 수 없습니다.".formatted(orderId));
-        }
+    public RsData<OrderInfo> updateOrderInfo(@PathVariable long orderId, @RequestBody @Valid UpdateReqBody updateReqBody) {
+        OrderInfo orderInfo = orderInfoService.getOrderById(orderId);
+        orderInfoService.updateOrderInfo(
+                orderInfo,
+                updateReqBody.orderStatus(),
+                updateReqBody.memberEmail,
+                updateReqBody.memberAddress
+        );
+        return RsData.success(HttpStatus.OK,
+                orderInfo,
+                "%d번 주문 수정이 완료되었습니다.".formatted(orderId));
     }
 
     public record UpdateReqBody(
@@ -60,17 +50,11 @@ public class ApiV1OrderInfoController {
     }
 
     @DeleteMapping("/{orderId}")
-    public ResponseEntity<RsData<Void>> deleteOrderInfo(@PathVariable long orderId) {
-        try {
-            OrderInfo orderInfo = orderInfoService.getOrderById(orderId).get();
-            orderInfoService.deleteOrderInfo(orderInfo);
-            return RsData.success(
-                    HttpStatus.OK,
-                    "%d번 주문이 삭제되었습니다.".formatted(orderId));
-        } catch (NoSuchElementException e) {
-            return RsData.failure(
-                    HttpStatus.NOT_FOUND,
-                    "%d번 주문 정보를 찾을 수 없습니다.".formatted(orderId));
-        }
+    public RsData<Void> deleteOrderInfo(@PathVariable long orderId) {
+        OrderInfo orderInfo = orderInfoService.getOrderById(orderId);
+        orderInfoService.deleteOrderInfo(orderInfo);
+        return RsData.success(
+                HttpStatus.OK,
+                "%d번 주문이 삭제되었습니다.".formatted(orderId));
     }
 }
