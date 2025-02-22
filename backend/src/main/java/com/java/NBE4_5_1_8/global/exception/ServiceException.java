@@ -1,18 +1,28 @@
 package com.java.NBE4_5_1_8.global.exception;
 
+import com.java.NBE4_5_1_8.global.response.RsData;
 import lombok.Getter;
-import org.springframework.http.HttpStatus;
 
 @Getter
 public class ServiceException extends RuntimeException {
 
-    private final HttpStatus status;
-    private final String message;
+    private RsData<?> rsData;
 
-    public ServiceException(HttpStatus status, String message) {
+    public ServiceException(String code, String message) {
         super(message);
-        this.status = status;
-        this.message = message;
+        rsData = RsData.failure(code, message);
+    }
+
+    public String getCode() {
+        return rsData.getCode();
+    }
+
+    public String getMessage() {
+        return rsData.getMessage();
+    }
+
+    public int getStatusCode() {
+        return rsData.getStatusCode();
     }
 
 }
