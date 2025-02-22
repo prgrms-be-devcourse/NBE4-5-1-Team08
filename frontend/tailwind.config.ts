@@ -11,6 +11,8 @@ export default {
             colors: {
                 background: "var(--background)",
                 foreground: "var(--foreground)",
+                border: "hsl(220, 13%, 91%)",
+                ring: "hsl(220, 90%, 55%)",
             },
         },
     },

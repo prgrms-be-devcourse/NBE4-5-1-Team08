@@ -53,14 +53,14 @@ export interface components {
         };
         ItemDto: {
             /** Format: int64 */
-            itemId?: number;
-            itemName?: string;
-            category?: string;
+            itemId: number;
+            itemName: string;
+            category: string;
             description?: string;
             /** Format: int32 */
-            stockQuantity?: number;
+            stockQuantity: number;
             /** Format: int32 */
-            price?: number;
+            price: number;
         };
         RsDataItemDto: {
             success?: boolean;
