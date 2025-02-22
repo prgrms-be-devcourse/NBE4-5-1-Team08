@@ -3,7 +3,9 @@ package com.java.NBE4_5_1_8.domain.item.service;
 import com.java.NBE4_5_1_8.domain.item.dto.ItemForm;
 import com.java.NBE4_5_1_8.domain.item.entity.Item;
 import com.java.NBE4_5_1_8.domain.item.repository.ItemRepository;
+import com.java.NBE4_5_1_8.global.exception.ServiceException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -21,6 +23,7 @@ public class ItemService {
         item.setCategory(requestForm.getCategory());
         item.setDescription(requestForm.getDescription());
         item.setStockQuantity(requestForm.getStockQuantity());
+        item.setPrice(requestForm.getPrice());
 
         return itemRepository.save(item);
     }
@@ -31,29 +34,25 @@ public class ItemService {
 
     public Item getItemById(Long itemId) {
         return itemRepository.findById(itemId)
-                .orElseThrow(() -> new IllegalArgumentException("해당 상품이 없습니다. id=" + itemId));
+                .orElseThrow(() -> new ServiceException(HttpStatus.BAD_REQUEST, "존재하지 않는 상품입니다."));
     }
 
     public long count() {
         return itemRepository.count();
     }
 
-    public Item updateItem(Long itemId, ItemForm requestForm) {
-        Item item = itemRepository.findById(itemId)
-                .orElseThrow(() -> new IllegalArgumentException("해당 상품이 없습니다. id=" + itemId));
+    @Transactional
+    public void updateItem(Item item, ItemForm requestForm) {
 
         item.setItemName(requestForm.getItemName());
         item.setCategory(requestForm.getCategory());
         item.setDescription(requestForm.getDescription());
         item.setStockQuantity(requestForm.getStockQuantity());
+        item.setPrice(requestForm.getPrice());
 
-        return itemRepository.save(item);
     }
 
-    public void deleteItemById(Long itemId) {
-        itemRepository.findById(itemId)
-                .orElseThrow(() -> new IllegalArgumentException("해당 상품이 없습니다. id=" + itemId));
-
-        itemRepository.deleteById(itemId);
+    public void deleteItem(Item item) {
+        itemRepository.delete(item);
     }
 }
