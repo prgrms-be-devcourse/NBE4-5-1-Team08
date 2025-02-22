@@ -21,7 +21,7 @@ public class ApiV1ItemController {
     private final ItemService itemService;
 
     @PostMapping
-    public ResponseEntity<RsData<ItemDto>> createItem(@RequestBody @Valid ItemForm requestForm) {
+    public RsData<ItemDto> createItem(@RequestBody @Valid ItemForm requestForm) {
         Item item = itemService.createItem(requestForm);
 
         return RsData.success(
@@ -31,7 +31,7 @@ public class ApiV1ItemController {
     }
 
     @GetMapping
-    public ResponseEntity<RsData<List<ItemDto>>> getItemList() {
+    public RsData<List<ItemDto>> getItemList() {
         List<Item> items = itemService.getItemList();
         return RsData.success(
                 HttpStatus.OK,
@@ -42,7 +42,7 @@ public class ApiV1ItemController {
     }
 
     @GetMapping("/{itemId}")
-    public ResponseEntity<RsData<ItemDto>> getItemById(@PathVariable Long itemId) {
+    public RsData<ItemDto> getItemById(@PathVariable Long itemId) {
 
         Item item = itemService.getItemById(itemId);
 
@@ -51,11 +51,10 @@ public class ApiV1ItemController {
                 new ItemDto(item),
                 "상품 단건 조회 성공");
 
-
     }
 
     @PutMapping("/{itemId}")
-    public ResponseEntity<RsData<ItemDto>> updateItem(@PathVariable Long itemId, @RequestBody @Valid ItemForm requestForm) {
+    public RsData<ItemDto> updateItem(@PathVariable Long itemId, @RequestBody @Valid ItemForm requestForm) {
 
         Item item = itemService.getItemById(itemId);
         itemService.updateItem(item, requestForm);
@@ -67,7 +66,7 @@ public class ApiV1ItemController {
     }
 
     @DeleteMapping("/{itemId}")
-    public ResponseEntity<RsData<Void>> deleteItemById(@PathVariable Long itemId) {
+    public RsData<Void> deleteItemById(@PathVariable Long itemId) {
 
         Item item = itemService.getItemById(itemId);
         itemService.deleteItem(item);
