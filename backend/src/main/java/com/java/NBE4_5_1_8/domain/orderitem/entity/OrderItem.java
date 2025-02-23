@@ -1,5 +1,6 @@
 package com.java.NBE4_5_1_8.domain.orderitem.entity;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.java.NBE4_5_1_8.domain.item.entity.Item;
 import com.java.NBE4_5_1_8.domain.orderinfo.entity.OrderInfo;
 import jakarta.persistence.*;
@@ -21,6 +22,7 @@ public class OrderItem {
 
     @ManyToOne
     @JoinColumn(name = "order_id")
+    @JsonManagedReference
     private OrderInfo orderInfo;
 
     private int orderPrice;

@@ -1,5 +1,6 @@
 package com.java.NBE4_5_1_8.domain.orderinfo.entity;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.java.NBE4_5_1_8.domain.orderitem.entity.OrderItem;
 import com.java.NBE4_5_1_8.global.entity.BaseTime;
 import jakarta.persistence.*;
@@ -25,6 +26,7 @@ public class OrderInfo extends BaseTime {
     private String memberAddress;
 
     @OneToMany(mappedBy = "orderInfo", cascade = CascadeType.ALL)
+    @JsonBackReference
     private List<OrderItem> orderItems = new ArrayList<>();
 
     public static OrderInfo createOrderInfo(String memberEmail, String memberAddress) {
