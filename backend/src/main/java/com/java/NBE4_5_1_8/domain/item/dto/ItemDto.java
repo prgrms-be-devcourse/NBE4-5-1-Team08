@@ -17,6 +17,7 @@ public class ItemDto {
     private String description;
     private int stockQuantity;
     private int price;
+    private String imageUrl;
 
     public ItemDto(Item item) {
         this.itemId = item.getItemId();
@@ -25,5 +26,6 @@ public class ItemDto {
         this.description = item.getDescription();
         this.stockQuantity = item.getStockQuantity();
         this.price = item.getPrice();
+        this.imageUrl = item.getImageUrl();
     }
 }
