@@ -1,10 +1,10 @@
 package com.java.NBE4_5_1_8.global.response;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.java.NBE4_5_1_8.global.message.MessageType;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.Getter;
 import org.springframework.http.HttpStatus;
 
 @AllArgsConstructor
@@ -13,6 +13,7 @@ import org.springframework.http.HttpStatus;
 public class RsData<T> {
     private HttpStatus status;
     private boolean success;
+    @Getter
     private MessageType message;
     private T data;
 

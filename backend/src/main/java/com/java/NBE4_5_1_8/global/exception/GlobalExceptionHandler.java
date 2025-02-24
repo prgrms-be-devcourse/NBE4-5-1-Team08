@@ -22,7 +22,7 @@ public class GlobalExceptionHandler {
                 .body(
                         RsData.failure(
                                 e.getStatusCode(),
-                                e.getMessage()
+                                e.getErrorMessage()
                         )
                 );
 
@@ -44,7 +44,7 @@ public class GlobalExceptionHandler {
                 .body(
                         RsData.failure(
                                 HttpStatus.BAD_REQUEST,
-                                message
+                                () -> message
                         )
                 );
     }
