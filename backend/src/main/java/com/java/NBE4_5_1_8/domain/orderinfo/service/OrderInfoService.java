@@ -9,6 +9,7 @@ import com.java.NBE4_5_1_8.domain.orderinfo.repository.OrderInfoRepository;
 import com.java.NBE4_5_1_8.domain.orderitem.entity.OrderItem;
 import com.java.NBE4_5_1_8.domain.orderitem.repository.OrderItemRepository;
 import com.java.NBE4_5_1_8.global.exception.ServiceException;
+import com.java.NBE4_5_1_8.global.message.ErrorMessage;
 import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -32,7 +33,7 @@ public class OrderInfoService {
         List<OrderItem> orderItems = orderForm.getItemList().stream()
                 .map(dto -> {
                     Item item = itemRepository.findById(dto.getItemId())
-                            .orElseThrow(() -> new ServiceException(HttpStatus.BAD_REQUEST, "존재하지 않는 상품입니다."));
+                            .orElseThrow(() -> new ServiceException(HttpStatus.BAD_REQUEST, ErrorMessage.ITEM_NOT_FOUND));
 
                     OrderItem orderItem = OrderItem.createOrderItem(item, orderInfo, dto.getQuantity());
                     orderItem.setOrderPrice(item.getPrice() * dto.getQuantity());
@@ -48,7 +49,7 @@ public class OrderInfoService {
 
     public OrderInfo getOrderById(Long id) {
         return orderInfoRepository.findById(id)
-                .orElseThrow(() -> new ServiceException(HttpStatus.BAD_REQUEST, "존재하지 않는 주문입니다."));
+                .orElseThrow(() -> new ServiceException(HttpStatus.BAD_REQUEST, ErrorMessage.ORDER_NOT_FOUND));
     }
 
     public Long getOrderItemList(Long orderInfoId, String password) {
@@ -68,7 +69,7 @@ public class OrderInfoService {
         OrderInfo orderInfo = getOrderById(orderId);
 
         if (!orderInfo.getOrderStatus().equals(OrderStatus.ORDERED)) {
-            throw new ServiceException(HttpStatus.BAD_REQUEST, "해당 주문은 삭제할 수 없습니다.");
+            throw new ServiceException(HttpStatus.BAD_REQUEST, ErrorMessage.ITEM_CANNOT_BE_DELETED);
         }
 
         orderInfoRepository.delete(orderInfo);
@@ -79,7 +80,7 @@ public class OrderInfoService {
         OrderInfo orderInfo = getOrderById(orderId);
 
         if (!orderInfo.getOrderStatus().equals(OrderStatus.ORDERED)) {
-            throw new ServiceException(HttpStatus.BAD_REQUEST, "해당 주문은 취소할 수 없습니다.");
+            throw new ServiceException(HttpStatus.BAD_REQUEST, ErrorMessage.ITEM_CANNOT_BE_DELETED);
         }
 
         orderInfo.setOrderStatus(OrderStatus.CANCELLED);
@@ -87,13 +88,13 @@ public class OrderInfoService {
 
     public OrderItem getOrderItemById(long orderItemId) {
         return orderItemRepository.findById(orderItemId)
-                .orElseThrow(() -> new ServiceException(HttpStatus.BAD_REQUEST, "존재하지 않는 주문입니다."));
+                .orElseThrow(() -> new ServiceException(HttpStatus.BAD_REQUEST, ErrorMessage.ORDER_NOT_FOUND));
     }
 
     @Transactional
     public void updateOrderItem(OrderItem orderItem, @NotNull long itemId,@NotNull int quantity) {
         orderItem.setItem(itemRepository.findById(itemId)
-                .orElseThrow(() -> new ServiceException(HttpStatus.BAD_REQUEST, "존재하지 않는 상품입니다.")));
+                .orElseThrow(() -> new ServiceException(HttpStatus.BAD_REQUEST, ErrorMessage.ITEM_NOT_FOUND)));
         orderItem.setQuantity(quantity);
     }
 }
