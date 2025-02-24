@@ -24,8 +24,15 @@ const ClientLoginPage = () => {
         }
     });
 
+    // TODO not made yet
     const onSubmit = async (values: FormSchemaType) => {
+        const token = jwt.sign({username, role: "admin"}, JWT_SECRET, {expiresIn: "1h"});
 
+        // 응답 쿠키에 JWT 저장
+        const response = NextResponse.json({success: true, message: "로그인 성공"});
+        response.cookies.set("token", token, {httpOnly: true, secure: process.env.NODE_ENV === "production"});
+
+        return response;
     }
 
     return (
