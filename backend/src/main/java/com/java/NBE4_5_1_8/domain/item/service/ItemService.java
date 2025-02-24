@@ -6,6 +6,7 @@ import com.java.NBE4_5_1_8.domain.item.repository.ItemRepository;
 import com.java.NBE4_5_1_8.global.exception.ServiceException;
 import com.java.NBE4_5_1_8.global.message.ErrorMessage;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -22,12 +23,14 @@ import java.util.List;
 @RequiredArgsConstructor
 public class ItemService {
     private final ItemRepository itemRepository;
-    private static final String STATIC_DIR = "src/main/resources/static/items";
+
+    @Value("${file.upload-dir}")
+    private String itemsDir;
 
     private String saveImage(MultipartFile file, Long itemId) {
         try {
             String fileName = "item" + itemId + "." + getFileExtension(file);
-            Path filePath = Paths.get(STATIC_DIR, fileName);
+            Path filePath = Paths.get(itemsDir, fileName);
 
             if (!Files.exists(filePath.getParent())) {
                 Files.createDirectories(filePath.getParent());
