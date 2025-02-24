@@ -24,16 +24,18 @@ public class OrderInfo extends BaseTime {
 
     private String memberEmail;
     private String memberAddress;
+    private String memberPassword;
 
     @OneToMany(mappedBy = "orderInfo", cascade = CascadeType.ALL)
     @JsonBackReference
     private List<OrderItem> orderItems = new ArrayList<>();
 
-    public static OrderInfo createOrderInfo(String memberEmail, String memberAddress) {
-        OrderInfo orderInfo = new OrderInfo();
-        orderInfo.setOrderStatus(OrderStatus.ORDERED);
-        orderInfo.setMemberEmail(memberEmail);
-        orderInfo.setMemberAddress(memberAddress);
-        return orderInfo;
+    public OrderInfo(String memberEmail, String memberPassword) {
+        this.orderStatus = OrderStatus.ORDERED;
+        this.memberEmail = memberEmail;
+        this.memberPassword = memberPassword;
+    }
+
+    public OrderInfo() {
     }
 }
