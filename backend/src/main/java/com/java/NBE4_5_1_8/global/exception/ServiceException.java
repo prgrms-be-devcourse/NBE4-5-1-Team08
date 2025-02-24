@@ -1,5 +1,6 @@
 package com.java.NBE4_5_1_8.global.exception;
 
+import com.java.NBE4_5_1_8.global.message.MessageType;
 import com.java.NBE4_5_1_8.global.response.RsData;
 import lombok.Getter;
 import org.springframework.http.HttpStatus;
@@ -9,12 +10,12 @@ public class ServiceException extends RuntimeException {
 
     private RsData<?> rsData;
 
-    public ServiceException(HttpStatus status, String message) {
-        super(message);
+    public ServiceException(HttpStatus status, MessageType message) {
+        super(message.getMessage());
         rsData = RsData.failure(status, message);
     }
 
-    public String getMessage() {
+    public MessageType getErrorMessage() {
         return rsData.getMessage();
     }
 
