@@ -1,4 +1,4 @@
-'use client'
+"use client"
 
 import {Table, TableBody, TableCell, TableFooter, TableHead, TableHeader, TableRow} from "@/components/ui/table";
 import {Input} from "@/components/ui/input";
@@ -13,7 +13,7 @@ import {client} from "@/app/api/client";
 
 const formSchema = z.object({
     email: z.string().email({message: "유효한 이메일을 입력하세요."}),
-    password: z.string().min(6, {message: "비밀번호는 최소 6자 이상이어야 합니다."}),
+    password: z.string().min(4, {message: "비밀번호는 최소 4자 이상이어야 합니다."}),
     confirmPassword: z.string(),
     address: z.string().min(5, {message: "주소는 최소 5자 이상 입력해야 합니다."})
 }).refine(data => data.password === data.confirmPassword, {
@@ -46,19 +46,21 @@ const ClientCheckoutPage = () => {
         }
 
         const payload: OrderPayload = {
-            items: cartItems.map(({itemId, quantity}) => ({itemId, quantity})),
-            email: values.email,
-            password: values.password,
-            address: values.address
+            itemList: cartItems.map(({itemId, quantity}) => ({itemId, quantity})),
+            memberEmail: values.email,
+            memberPassword: values.password,
+            memberAddress: values.address
         };
 
         try {
-            await client.POST('/v1/items', {
+            await client.POST('/v1/orders', {
                 body: payload,
             });
         } catch (error) {
             console.error("주문 요청 중 오류 발생:", error);
         }
+        localStorage.removeItem("cart");
+        router.push("/");
     };
 
     return (

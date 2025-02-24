@@ -1,10 +1,10 @@
-'use client';
+"use client";
 
 import {useCallback, useEffect, useState} from "react";
 import {Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle} from "@/components/ui/card";
 import {Dialog, DialogContent, DialogDescription, DialogFooter, DialogTitle} from "@/components/ui/dialog";
 import {Button} from "@/components/ui/button";
-import {components} from "@/lib/api/schema";
+import {components} from "@/lib/api/_schema";
 import {Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger} from "@/components/ui/sheet";
 import {Input} from "@/components/ui/input";
 import Link from "next/link";

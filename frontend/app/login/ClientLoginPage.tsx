@@ -1,4 +1,4 @@
-'use client'
+"use client"
 
 import {Form, FormControl, FormField, FormItem, FormLabel, FormMessage} from "@/components/ui/form";
 import {Input} from "@/components/ui/input";
@@ -25,15 +25,15 @@ const ClientLoginPage = () => {
     });
 
     // TODO not made yet
-    const onSubmit = async (values: FormSchemaType) => {
-        const token = jwt.sign({username, role: "admin"}, JWT_SECRET, {expiresIn: "1h"});
-
-        // 응답 쿠키에 JWT 저장
-        const response = NextResponse.json({success: true, message: "로그인 성공"});
-        response.cookies.set("token", token, {httpOnly: true, secure: process.env.NODE_ENV === "production"});
-
-        return response;
-    }
+    // const onSubmit = async (values: FormSchemaType) => {
+    //     const token = jwt.sign({username, role: "admin"}, JWT_SECRET, {expiresIn: "1h"});
+    //
+    //     // 응답 쿠키에 JWT 저장
+    //     const response = NextResponse.json({success: true, message: "로그인 성공"});
+    //     response.cookies.set("token", token, {httpOnly: true, secure: process.env.NODE_ENV === "production"});
+    //
+    //     return response;
+    // }
 
     return (
         <div className="mt-6 p-6 border rounded-lg shadow-md w-1/2 mx-auto">

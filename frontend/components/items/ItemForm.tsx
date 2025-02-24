@@ -1,4 +1,4 @@
-'use client';
+"use client";
 
 import React, {useState} from "react";
 import {Button} from "@/components/ui/button";
@@ -73,11 +73,11 @@ const ItemForm = ({itemFormProps, isEditMode, itemId}: ItemFormProps) => {
         if (isEditMode) {
             await clientFormData.PUT('/v1/items/{itemId}', {
                 params: {path: {itemId: itemId!}},
-                body: formData,
+                body: formDataToSend,
             })
         } else {
             await clientFormData.POST(`/v1/items`, {
-                body: formData,
+                body: formDataToSend,
             });
         }
         router.push("/admin/items");
@@ -88,7 +88,7 @@ const ItemForm = ({itemFormProps, isEditMode, itemId}: ItemFormProps) => {
             <Card className="w-[350px]">
                 <form onSubmit={handleSubmit}>
                     <CardHeader>
-                        <CardTitle>Create project</CardTitle>
+                        <CardTitle>상품 정보</CardTitle>
                     </CardHeader>
                     <CardContent>
                         <div className="grid w-full items-center gap-4">
@@ -120,7 +120,7 @@ const ItemForm = ({itemFormProps, isEditMode, itemId}: ItemFormProps) => {
                                           placeholder="Name of your project"/>
                                 <Label htmlFor="stockQuantity">가격</Label>
                                 <Input id="price" type="number" name="price"
-                                       value={formData.stockQuantity} onChange={handleChange}
+                                       value={formData.price} onChange={handleChange}
                                        placeholder="Name of your project"/>
                                 <Label htmlFor="stockQuantity">수량</Label>
                                 <Input id="stockQuantity" type="number" name="stockQuantity"

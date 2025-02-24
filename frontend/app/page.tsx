@@ -2,16 +2,15 @@ import {client} from "@/app/api/client";
 import ClientHomePage from "@/app/ClientHomePage";
 
 const HomePage = async () => {
-    let rsData;
 
     try {
-        rsData = await client.GET('/v1/items');
+        const rsData = await client.GET('/v1/items');
 
         if (!rsData?.data?.success || !rsData.data.data) {
             return <div>데이터 로드 실패</div>
         }
 
-        const filteredItems = rsData.data.data.filter(item => item.stockQuantity > 0);
+        const filteredItems = rsData.data.data.filter((item: { stockQuantity: number; }) => item.stockQuantity > 0);
 
         return <ClientHomePage itemList={filteredItems}/>;
     } catch (error) {

@@ -6,11 +6,11 @@ export interface CartItem {
 }
 
 interface OrderPayload {
-    items: {
+    itemList: {
         itemId: number;
         quantity: number;
     }[];
-    email: string;
-    password: string;
-    address: string;
+    memberEmail: string;
+    memberPassword: string;
+    memberAddress: string;
 }
