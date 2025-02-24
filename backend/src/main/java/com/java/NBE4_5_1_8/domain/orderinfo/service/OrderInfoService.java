@@ -70,8 +70,7 @@ public class OrderInfoService {
 
     @Transactional
     public void cancelOrder(long orderId) {
-        OrderInfo orderInfo = orderInfoRepository.findById(orderId)
-                .orElseThrow(() -> new ServiceException(HttpStatus.BAD_REQUEST, "존재하지 않는 주문입니다."));
+        OrderInfo orderInfo = getOrderById(orderId);
 
         if (!orderInfo.getOrderStatus().equals(OrderStatus.ORDERED)) {
             throw new ServiceException(HttpStatus.BAD_REQUEST, "해당 주문은 취소할 수 없습니다.");
