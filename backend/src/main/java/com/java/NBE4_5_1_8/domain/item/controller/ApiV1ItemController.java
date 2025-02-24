@@ -4,11 +4,11 @@ import com.java.NBE4_5_1_8.domain.item.dto.ItemDto;
 import com.java.NBE4_5_1_8.domain.item.dto.ItemForm;
 import com.java.NBE4_5_1_8.domain.item.entity.Item;
 import com.java.NBE4_5_1_8.domain.item.service.ItemService;
+import com.java.NBE4_5_1_8.global.message.SuccessMessage;
 import com.java.NBE4_5_1_8.global.response.RsData;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -27,7 +27,7 @@ public class ApiV1ItemController {
         return RsData.success(
                 HttpStatus.OK,
                 new ItemDto(item),
-                "상품 등록 성공");
+                SuccessMessage.ITEM_CREATED);
     }
 
     @GetMapping
@@ -38,7 +38,7 @@ public class ApiV1ItemController {
                 items.stream()
                         .map(ItemDto::new)
                         .toList(),
-                "상품 조회 성공");
+                SuccessMessage.ITEM_LIST_FETCHED);
     }
 
     @GetMapping("/{itemId}")
@@ -49,7 +49,7 @@ public class ApiV1ItemController {
         return RsData.success(
                 HttpStatus.OK,
                 new ItemDto(item),
-                "상품 단건 조회 성공");
+                SuccessMessage.ITEM_FETCHED);
 
     }
 
@@ -62,7 +62,7 @@ public class ApiV1ItemController {
         return RsData.success(
                 HttpStatus.OK,
                 new ItemDto(item),
-                "상품 수정 성공");
+                SuccessMessage.ITEM_UPDATED);
     }
 
     @DeleteMapping("/{itemId}")
@@ -73,6 +73,6 @@ public class ApiV1ItemController {
 
         return RsData.success(
                 HttpStatus.OK,
-                "상품 삭제 성공");
+                SuccessMessage.ITEM_UPDATED);
     }
 }
