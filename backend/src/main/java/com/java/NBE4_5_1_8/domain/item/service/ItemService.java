@@ -26,7 +26,7 @@ public class ItemService {
 
     private String saveImage(MultipartFile file, Long itemId) {
         try {
-            String fileName = "item" + itemId + ".png";
+            String fileName = "item" + itemId + "." + getFileExtension(file);
             Path filePath = Paths.get(STATIC_DIR, fileName);
 
             if (!Files.exists(filePath.getParent())) {
@@ -38,7 +38,7 @@ public class ItemService {
 
         } catch (IOException e) {
             System.out.println("이미지 업로드 실패: " + e.getMessage());
-            return "/static/default.png";
+            return "/static/default.png"; // 추후 수정 필요
         }
     }
 
@@ -58,9 +58,9 @@ public class ItemService {
 
         itemRepository.save(item);
 
-        String imageUrl = "/static/default.png";
-        if (requestForm.getImage() != null && !requestForm.getImage().isEmpty()) {
-            imageUrl = saveImage(requestForm.getImage(), item.getItemId());
+        String imageUrl = "/static/default.png"; // 추후 수정 필요
+        if (requestForm.getItemImage() != null && !requestForm.getItemImage().isEmpty()) {
+            imageUrl = saveImage(requestForm.getItemImage(), item.getItemId());
         }
         item.setImageUrl(imageUrl);
 
@@ -90,8 +90,8 @@ public class ItemService {
         item.setPrice(requestForm.getPrice());
 
         Long itemId = item.getItemId();
-        if (requestForm.getImage() != null && !requestForm.getImage().isEmpty()) {
-            String imageUrl = saveImage(requestForm.getImage(), itemId);
+        if (requestForm.getItemImage() != null && !requestForm.getItemImage().isEmpty()) {
+            String imageUrl = saveImage(requestForm.getItemImage(), itemId);
             item.setImageUrl(imageUrl);
         }
     }

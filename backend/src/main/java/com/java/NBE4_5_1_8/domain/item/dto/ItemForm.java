@@ -32,5 +32,5 @@ public class ItemForm {
     @NotNull(message = "가격은 필수 입력 항목입니다.")
     private Integer price;
 
-    private MultipartFile image;
+    private MultipartFile itemImage;
 }
