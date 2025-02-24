@@ -63,7 +63,14 @@ public class OrderInfoService {
         orderInfo.setMemberAddress(memberAddress);
     }
 
-    public void deleteOrderInfo(OrderInfo orderInfo) {
+    @Transactional
+    public void deleteOrderInfo(long orderId) {
+        OrderInfo orderInfo = getOrderById(orderId);
+
+        if (!orderInfo.getOrderStatus().equals(OrderStatus.ORDERED)) {
+            throw new ServiceException(HttpStatus.BAD_REQUEST, "해당 주문은 삭제할 수 없습니다.");
+        }
+
         orderInfoRepository.delete(orderInfo);
     }
 }
