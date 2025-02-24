@@ -8,6 +8,8 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -31,6 +33,8 @@ public class OrderInfo extends BaseTime {
     @JsonBackReference
     private List<OrderItem> orderItems = new ArrayList<>();
 
+    private LocalDate deliveryDate;
+
     public OrderInfo(OrderForm orderForm) {
         this.orderStatus = OrderStatus.ORDERED;
         this.memberEmail = orderForm.getMemberEmail();
@@ -39,5 +43,17 @@ public class OrderInfo extends BaseTime {
     }
 
     public OrderInfo() {
+    }
+
+
+    public void setDeliveryDateByOrderTime() {
+        LocalDateTime orderTime = this.getCreatedDate();
+        LocalDate orderDate = orderTime.toLocalDate();
+
+        if (orderTime.getHour() >= 14) {
+            this.deliveryDate = orderDate.plusDays(1);
+        } else {
+            this.deliveryDate = orderDate;
+        }
     }
 }

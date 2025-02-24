@@ -43,6 +43,7 @@ public class OrderInfoService {
 
         orderInfo.setOrderItems(orderItems);
         orderInfoRepository.save(orderInfo);
+        orderInfo.setDeliveryDateByOrderTime();
 
         return orderInfo.getOrderId();
     }
