@@ -4,6 +4,7 @@ import com.java.NBE4_5_1_8.domain.item.dto.ItemForm;
 import com.java.NBE4_5_1_8.domain.item.entity.Item;
 import com.java.NBE4_5_1_8.domain.item.repository.ItemRepository;
 import com.java.NBE4_5_1_8.global.exception.ServiceException;
+import com.java.NBE4_5_1_8.global.message.ErrorMessage;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -33,7 +34,7 @@ public class ItemService {
 
     public Item getItemById(Long itemId) {
         return itemRepository.findById(itemId)
-                .orElseThrow(() -> new ServiceException(HttpStatus.BAD_REQUEST, "존재하지 않는 상품입니다."));
+                .orElseThrow(() -> new ServiceException(HttpStatus.BAD_REQUEST, ErrorMessage.ITEM_NOT_FOUND));
     }
 
     public long count() {
