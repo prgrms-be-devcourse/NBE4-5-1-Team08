@@ -12,4 +12,5 @@ public class OrderForm {
     private List<OrderItemDto> itemList;
     private String memberEmail;
     private String memberPassword;
+    private String memberAddress;
 }

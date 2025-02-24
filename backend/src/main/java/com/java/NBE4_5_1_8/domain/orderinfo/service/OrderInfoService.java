@@ -24,7 +24,7 @@ public class OrderInfoService {
 
     @Transactional
     public Long createOrderInfo(OrderForm orderForm) {
-        OrderInfo orderInfo = new OrderInfo(orderForm.getMemberEmail(), orderForm.getMemberPassword());
+        OrderInfo orderInfo = new OrderInfo(orderForm);
 
         List<OrderItem> orderItems = orderForm.getItemList().stream()
                 .map(dto -> {

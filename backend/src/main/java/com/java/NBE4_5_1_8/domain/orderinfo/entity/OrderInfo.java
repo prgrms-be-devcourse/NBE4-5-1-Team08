@@ -1,6 +1,7 @@
 package com.java.NBE4_5_1_8.domain.orderinfo.entity;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.java.NBE4_5_1_8.domain.orderinfo.dto.OrderForm;
 import com.java.NBE4_5_1_8.domain.orderitem.entity.OrderItem;
 import com.java.NBE4_5_1_8.global.entity.BaseTime;
 import jakarta.persistence.*;
@@ -30,10 +31,11 @@ public class OrderInfo extends BaseTime {
     @JsonBackReference
     private List<OrderItem> orderItems = new ArrayList<>();
 
-    public OrderInfo(String memberEmail, String memberPassword) {
+    public OrderInfo(OrderForm orderForm) {
         this.orderStatus = OrderStatus.ORDERED;
-        this.memberEmail = memberEmail;
-        this.memberPassword = memberPassword;
+        this.memberEmail = orderForm.getMemberEmail();
+        this.memberPassword = orderForm.getMemberPassword();
+        this.memberAddress = orderForm.getMemberAddress();
     }
 
     public OrderInfo() {
