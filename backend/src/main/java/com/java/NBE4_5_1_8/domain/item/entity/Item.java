@@ -1,6 +1,6 @@
 package com.java.NBE4_5_1_8.domain.item.entity;
 
-import com.java.NBE4_5_1_8.domain.orderitem.OrderItem;
+import com.java.NBE4_5_1_8.domain.orderitem.entity.OrderItem;
 import com.java.NBE4_5_1_8.global.entity.BaseTime;
 import jakarta.persistence.*;
 import lombok.Getter;
@@ -20,6 +20,7 @@ public class Item extends BaseTime {
     private String description; // 제품 설명
     private int stockQuantity;
     private int price;
+    private String imageUrl;
 
     @OneToMany(mappedBy = "item")
     private List<OrderItem> orderItems;
