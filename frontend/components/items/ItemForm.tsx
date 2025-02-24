@@ -15,6 +15,7 @@ type ItemFormProps = {
         itemName?: string;
         category?: string;
         description?: string;
+        price?: number;
         stockQuantity?: number;
     };
     itemId?: number;
@@ -28,6 +29,7 @@ const ItemForm = ({itemFormProps, isEditMode, itemId}: ItemFormProps) => {
         itemName: itemFormProps?.itemName ?? "",
         category: itemFormProps?.category ?? "",
         description: itemFormProps?.description ?? "",
+        price: itemFormProps?.price ?? 0,
         stockQuantity: itemFormProps?.stockQuantity ?? 0,
     });
 
@@ -92,6 +94,10 @@ const ItemForm = ({itemFormProps, isEditMode, itemId}: ItemFormProps) => {
                                 <Textarea id="description" name="description" value={formData.description}
                                           onChange={handleChange}
                                           placeholder="Name of your project"/>
+                                <Label htmlFor="stockQuantity">가격</Label>
+                                <Input id="price" type="number" name="price"
+                                       value={formData.stockQuantity} onChange={handleChange}
+                                       placeholder="Name of your project"/>
                                 <Label htmlFor="stockQuantity">수량</Label>
                                 <Input id="stockQuantity" type="number" name="stockQuantity"
                                        value={formData.stockQuantity} onChange={handleChange}

@@ -8,7 +8,7 @@ import {components} from "@/lib/api/schema";
 import {Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger} from "@/components/ui/sheet";
 import {Input} from "@/components/ui/input";
 import Link from "next/link";
-import {CartItem} from "@/type/CartItem";
+import {CartItem} from "@/type/types";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faCartPlus, faCartShopping} from "@fortawesome/free-solid-svg-icons";
 

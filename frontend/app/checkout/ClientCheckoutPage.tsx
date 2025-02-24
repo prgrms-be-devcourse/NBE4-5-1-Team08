@@ -7,8 +7,9 @@ import {Form, FormControl, FormField, FormItem, FormLabel, FormMessage} from "@/
 import {useForm} from "react-hook-form";
 import {z} from "zod";
 import {zodResolver} from "@hookform/resolvers/zod";
-import {CartItem} from "@/type/CartItem";
+import {CartItem, OrderPayload} from "@/type/types";
 import {useRouter} from "next/navigation";
+import client from "@/app/api/client";
 
 const formSchema = z.object({
     email: z.string().email({message: "유효한 이메일을 입력하세요."}),
@@ -19,6 +20,8 @@ const formSchema = z.object({
     message: "비밀번호가 일치하지 않습니다.",
     path: ["confirmPassword"]
 });
+
+type FormSchemaType = z.infer<typeof formSchema>;
 
 const ClientCheckoutPage = () => {
     const cartItems: CartItem[] | null = JSON.parse(localStorage.getItem("cart") || "[]");
@@ -35,24 +38,25 @@ const ClientCheckoutPage = () => {
     });
 
 
-    const onSubmit = async (values: any) => {
+    const onSubmit = async (values: FormSchemaType) => {
         if (!cartItems || cartItems.length === 0) {
             alert("장바구니가 비어 있습니다.");
             router.push("/");
             return;
         }
 
-        const payload = {
+        const payload: OrderPayload = {
             items: cartItems.map(({itemId, quantity}) => ({itemId, quantity})),
-            memberEmail: values.email,
+            email: values.email,
             password: values.password,
-            memberAddress: values.address
+            address: values.address
         };
 
 
         try {
-            // TODO client.POST 로 주문추가
-            // localStorage.removeItem("cart");
+            await client.POST('/v1/items', {
+                body: payload,
+            });
         } catch (error) {
             console.error("주문 요청 중 오류 발생:", error);
         }
@@ -61,7 +65,7 @@ const ClientCheckoutPage = () => {
     return (
         <>
             {cartItems && (
-                <div className="flex flex-col gap-2">
+                <div className="flex flex-col gap-2 w-1/2 mx-auto">
                     <Table>
                         <TableHeader>
                             <TableRow>
@@ -93,7 +97,7 @@ const ClientCheckoutPage = () => {
                         <h2 className="text-xl font-bold mb-4">배송 정보 입력</h2>
                         <Form {...form}>
                             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-                                {/* 이메일 입력 */}
+
                                 <FormField control={form.control} name="email" render={({field}) => (
                                     <FormItem className="flex items-center space-x-2">
                                         <FormLabel className="w-24">이메일</FormLabel>
@@ -134,7 +138,7 @@ const ClientCheckoutPage = () => {
                                     </FormItem>
                                 )}/>
                                 <div className={"flex justify-center mt-5"}>
-                                    <Button type="submit" className="w-1/3">주문하기</Button>
+                                    <Button type="submit" className="w-full">주문하기</Button>
                                 </div>
                             </form>
                         </Form>
