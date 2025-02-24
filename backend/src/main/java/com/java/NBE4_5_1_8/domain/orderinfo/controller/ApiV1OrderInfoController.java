@@ -4,9 +4,8 @@ import com.java.NBE4_5_1_8.domain.orderinfo.dto.OrderForm;
 import com.java.NBE4_5_1_8.domain.orderinfo.entity.OrderInfo;
 import com.java.NBE4_5_1_8.domain.orderinfo.entity.OrderStatus;
 import com.java.NBE4_5_1_8.domain.orderinfo.service.OrderInfoService;
-import com.java.NBE4_5_1_8.domain.orderitem.dto.OrderItemDto;
 import com.java.NBE4_5_1_8.domain.orderitem.entity.OrderItem;
-
+import com.java.NBE4_5_1_8.global.message.SuccessMessage;
 import com.java.NBE4_5_1_8.global.response.RsData;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Email;
@@ -28,8 +27,7 @@ public class ApiV1OrderInfoController {
         Long orderItemId = orderInfoService.createOrderInfo(orderForm);
         return RsData.success(
                 HttpStatus.CREATED,
-                orderItemId,
-                "주문 추가 성공");
+                SuccessMessage.ORDER_CREATED);
     }
 
     @GetMapping("{orderInfoId}")
@@ -40,8 +38,7 @@ public class ApiV1OrderInfoController {
         Long orderItemId = orderInfoService.getOrderItemList(orderInfoId, password);
         return RsData.success(
                 HttpStatus.OK,
-                orderItemId,
-                "주문 목록 조회 성공");
+                SuccessMessage.ORDER_LIST_FETCHED);
     }
 
     @PutMapping("/{orderId}")
@@ -54,8 +51,7 @@ public class ApiV1OrderInfoController {
                 updateReqBody.memberAddress
         );
         return RsData.success(HttpStatus.OK,
-                orderInfo,
-                "%d번 주문 수정이 완료되었습니다.".formatted(orderId));
+                SuccessMessage.ORDER_UPDATED);
     }
 
     public record UpdateReqBody(
@@ -80,7 +76,7 @@ public class ApiV1OrderInfoController {
         orderInfoService.cancelOrder(orderId);
         return RsData.success(
                 HttpStatus.OK,
-                "%d번 주문이 취소되었습니다.".formatted(orderId));
+                SuccessMessage.ORDER_DELETED);
     }
 
     @PutMapping("/{orderId}/{orderItemId}")
@@ -90,8 +86,7 @@ public class ApiV1OrderInfoController {
 
         return RsData.success(
                 HttpStatus.OK,
-                orderItem,
-                "해당 주문의 %d번 상품 수량이 %d개로 수정되었습니다.".formatted(orderItem.getItem().getItemId(), orderItem.getQuantity()));
+                SuccessMessage.ORDER_UPDATED);
     }
 
     public record UpdateOrderItemReqBody(
