@@ -11,6 +11,7 @@ import com.java.NBE4_5_1_8.domain.orderitem.entity.OrderItem;
 import com.java.NBE4_5_1_8.domain.orderitem.repository.OrderItemRepository;
 import com.java.NBE4_5_1_8.global.exception.ServiceException;
 import jakarta.persistence.EntityExistsException;
+import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -77,5 +78,17 @@ public class OrderInfoService {
         }
 
         orderInfo.setOrderStatus(OrderStatus.CANCELLED);
+    }
+
+    public OrderItem getOrderItemById(long orderItemId) {
+        return orderItemRepository.findById(orderItemId)
+                .orElseThrow(() -> new ServiceException(HttpStatus.BAD_REQUEST, "존재하지 않는 주문입니다."));
+    }
+
+    @Transactional
+    public void updateOrderItem(OrderItem orderItem, @NotNull long itemId,@NotNull int quantity) {
+        orderItem.setItem(itemRepository.findById(itemId)
+                .orElseThrow(() -> new ServiceException(HttpStatus.BAD_REQUEST, "존재하지 않는 상품입니다.")));
+        orderItem.setQuantity(quantity);
     }
 }
