@@ -7,6 +7,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.springframework.web.multipart.MultipartFile;
 
 @Getter
 @Setter
@@ -31,6 +32,5 @@ public class ItemForm {
     @NotNull(message = "가격은 필수 입력 항목입니다.")
     private Integer price;
 
-    @NotBlank(message = "이미지 URL은 필수 입력 항목입니다.")
-    private String imageUrl;
+    private MultipartFile image;
 }
