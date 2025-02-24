@@ -69,4 +69,14 @@ public class ApiV1OrderInfoController {
                 HttpStatus.OK,
                 "%d번 주문이 삭제되었습니다.".formatted(orderId));
     }
+
+    @PostMapping("/{orderId}/cancel")
+    public RsData<Void> cancelOrder(
+            @PathVariable long orderId
+    ) {
+        orderInfoService.cancelOrder(orderId);
+        return RsData.success(
+                HttpStatus.OK,
+                "%d번 주문이 취소되었습니다.".formatted(orderId));
+    }
 }
