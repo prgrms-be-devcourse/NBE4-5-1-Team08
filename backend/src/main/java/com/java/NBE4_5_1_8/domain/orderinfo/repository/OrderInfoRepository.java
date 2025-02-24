@@ -6,4 +6,5 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface OrderInfoRepository extends JpaRepository<OrderInfo, Long> {
+    OrderInfo findByOrderIdAndMemberPassword(Long orderId, String password);
 }
