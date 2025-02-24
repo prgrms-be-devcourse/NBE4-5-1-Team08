@@ -13,9 +13,11 @@ import com.java.NBE4_5_1_8.global.message.ErrorMessage;
 import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -86,6 +88,21 @@ public class OrderInfoService {
 
         orderInfo.setOrderStatus(OrderStatus.CANCELLED);
     }
+
+
+    @Scheduled(cron = "*/10 * * * * *", zone = "Asia/Seoul")
+    @Transactional
+    public void updateOrderStatus() {
+        List<OrderInfo> orderInfoList = orderInfoRepository.findAllByOrderStatus(OrderStatus.ORDERED);
+
+        for (OrderInfo orderInfo : orderInfoList) {
+            orderInfo.setOrderStatus(OrderStatus.SHIPPING);
+        }
+
+//        orderInfoRepository.saveAll(orderInfoList);
+        System.out.println("스케줄러 실행됨: " + LocalDateTime.now());
+    }
+
 
     public OrderItem getOrderItemById(Long orderItemId) {
         return orderItemRepository.findById(orderItemId)
