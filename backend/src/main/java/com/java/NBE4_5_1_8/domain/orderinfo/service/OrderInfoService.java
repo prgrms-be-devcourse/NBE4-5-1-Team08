@@ -80,7 +80,7 @@ public class OrderInfoService {
         OrderInfo orderInfo = getOrderById(orderId);
 
         if (!orderInfo.getOrderStatus().equals(OrderStatus.ORDERED)) {
-            throw new ServiceException(HttpStatus.BAD_REQUEST, ErrorMessage.ITEM_CANNOT_BE_DELETED);
+            throw new ServiceException(HttpStatus.BAD_REQUEST, ErrorMessage.ORDER_CANNOT_BE_DELETED);
         }
 
         orderInfo.setOrderStatus(OrderStatus.CANCELLED);
