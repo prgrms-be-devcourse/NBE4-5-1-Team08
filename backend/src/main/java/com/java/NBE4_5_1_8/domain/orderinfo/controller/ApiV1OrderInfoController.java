@@ -30,19 +30,19 @@ public class ApiV1OrderInfoController {
                 SuccessMessage.ORDER_CREATED);
     }
 
-    @GetMapping("{orderInfoId}")
+    @GetMapping("{orderId}")
     public RsData<Long> getOrderItemList(
-            @RequestHeader("password") String password,
-            @PathVariable("orderInfoId") Long orderInfoId) {
+            @RequestHeader("memberPassword") String memberPassword,
+            @PathVariable("orderId") Long orderId) {
 
-        Long orderItemId = orderInfoService.getOrderItemList(orderInfoId, password);
+        Long orderItemId = orderInfoService.getOrderItemList(orderId, memberPassword);
         return RsData.success(
                 HttpStatus.OK, orderItemId,
                 SuccessMessage.ORDER_LIST_FETCHED);
     }
 
     @PutMapping("/{orderId}")
-    public RsData<OrderInfo> updateOrderInfo(@PathVariable long orderId, @RequestBody @Valid UpdateReqBody updateReqBody) {
+    public RsData<OrderInfo> updateOrderInfo(@PathVariable Long orderId, @RequestBody @Valid UpdateReqBody updateReqBody) {
         OrderInfo orderInfo = orderInfoService.getOrderById(orderId);
         orderInfoService.updateOrderInfo(
                 orderInfo,
@@ -61,7 +61,7 @@ public class ApiV1OrderInfoController {
     }
 
     @DeleteMapping("/{orderId}")
-    public RsData<Void> deleteOrderInfo(@PathVariable long orderId) {
+    public RsData<Void> deleteOrderInfo(@PathVariable Long orderId) {
 //        orderInfoService.deleteOrderInfo(orderId);
 //        return RsData.success(
 //                HttpStatus.OK,
@@ -71,7 +71,7 @@ public class ApiV1OrderInfoController {
 
     @PostMapping("/{orderId}/cancel")
     public RsData<Void> cancelOrder(
-            @PathVariable long orderId
+            @PathVariable Long orderId
     ) {
         orderInfoService.cancelOrder(orderId);
         return RsData.success(
@@ -80,7 +80,7 @@ public class ApiV1OrderInfoController {
     }
 
     @PutMapping("/{orderId}/{orderItemId}")
-    public RsData<OrderItem> updateOrderItem(@PathVariable long orderItemId, @RequestBody @Valid UpdateOrderItemReqBody updateOrderItemReqBody) {
+    public RsData<OrderItem> updateOrderItem(@PathVariable Long orderItemId, @RequestBody @Valid UpdateOrderItemReqBody updateOrderItemReqBody) {
         OrderItem orderItem = orderInfoService.getOrderItemById(orderItemId);
         orderInfoService.updateOrderItem(orderItem, updateOrderItemReqBody.itemId,updateOrderItemReqBody.quantity());
 
@@ -90,7 +90,7 @@ public class ApiV1OrderInfoController {
     }
 
     public record UpdateOrderItemReqBody(
-            @NotNull long itemId,
+            @NotNull Long itemId,
             @NotNull int quantity
     ) {
     }

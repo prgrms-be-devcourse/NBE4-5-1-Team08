@@ -52,8 +52,8 @@ public class OrderInfoService {
                 .orElseThrow(() -> new ServiceException(HttpStatus.BAD_REQUEST, ErrorMessage.ORDER_NOT_FOUND));
     }
 
-    public Long getOrderItemList(Long orderInfoId, String password) {
-        OrderInfo orderInfo = orderInfoRepository.findByOrderIdAndMemberPassword(orderInfoId, password);
+    public Long getOrderItemList(Long orderId, String memberPassword) {
+        OrderInfo orderInfo = orderInfoRepository.findByOrderIdAndMemberPassword(orderId, memberPassword);
         return orderInfo.getOrderId();
     }
 
@@ -65,7 +65,7 @@ public class OrderInfoService {
     }
 
     @Transactional
-    public void deleteOrderInfo(long orderId) {
+    public void deleteOrderInfo(Long orderId) {
         OrderInfo orderInfo = getOrderById(orderId);
 
         if (!orderInfo.getOrderStatus().equals(OrderStatus.ORDERED)) {
@@ -76,7 +76,7 @@ public class OrderInfoService {
     }
 
     @Transactional
-    public void cancelOrder(long orderId) {
+    public void cancelOrder(Long orderId) {
         OrderInfo orderInfo = getOrderById(orderId);
 
         if (!orderInfo.getOrderStatus().equals(OrderStatus.ORDERED)) {
@@ -86,13 +86,13 @@ public class OrderInfoService {
         orderInfo.setOrderStatus(OrderStatus.CANCELLED);
     }
 
-    public OrderItem getOrderItemById(long orderItemId) {
+    public OrderItem getOrderItemById(Long orderItemId) {
         return orderItemRepository.findById(orderItemId)
                 .orElseThrow(() -> new ServiceException(HttpStatus.BAD_REQUEST, ErrorMessage.ORDER_NOT_FOUND));
     }
 
     @Transactional
-    public void updateOrderItem(OrderItem orderItem, @NotNull long itemId,@NotNull int quantity) {
+    public void updateOrderItem(OrderItem orderItem, @NotNull Long itemId,@NotNull int quantity) {
         orderItem.setItem(itemRepository.findById(itemId)
                 .orElseThrow(() -> new ServiceException(HttpStatus.BAD_REQUEST, ErrorMessage.ITEM_NOT_FOUND)));
         orderItem.setQuantity(quantity);
