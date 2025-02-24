@@ -1,5 +1,6 @@
 package com.java.NBE4_5_1_8.domain.item.dto;
 
+import com.java.NBE4_5_1_8.domain.item.entity.Category;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -19,7 +20,7 @@ public class ItemForm {
     private String itemName;
 
     @NotBlank(message = "카테고리는 필수 입력 항목입니다.")
-    private String category;
+    private Category category;
 
     @NotBlank(message = "상품 설명은 필수 입력 항목입니다.")
     private String description;

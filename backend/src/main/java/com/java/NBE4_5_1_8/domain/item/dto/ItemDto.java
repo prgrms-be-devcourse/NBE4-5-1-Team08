@@ -1,5 +1,6 @@
 package com.java.NBE4_5_1_8.domain.item.dto;
 
+import com.java.NBE4_5_1_8.domain.item.entity.Category;
 import com.java.NBE4_5_1_8.domain.item.entity.Item;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -13,7 +14,7 @@ import lombok.Setter;
 public class ItemDto {
     private Long itemId;
     private String itemName;
-    private String category;
+    private Category category;
     private String description;
     private int stockQuantity;
     private int price;

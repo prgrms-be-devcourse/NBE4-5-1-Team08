@@ -16,11 +16,13 @@ public class Item extends BaseTime {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long itemId;
     private String itemName;
-    private String category;
+    @Enumerated(EnumType.STRING)
+    private Category category;
     private String description; // 제품 설명
     private int stockQuantity;
     private int price;
     private String imageUrl;
+
 
     @OneToMany(mappedBy = "item")
     private List<OrderItem> orderItems;
