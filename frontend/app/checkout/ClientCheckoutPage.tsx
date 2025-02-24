@@ -9,7 +9,7 @@ import {z} from "zod";
 import {zodResolver} from "@hookform/resolvers/zod";
 import {CartItem, OrderPayload} from "@/type/types";
 import {useRouter} from "next/navigation";
-import client from "@/app/api/client";
+import {client} from "@/app/api/client";
 
 const formSchema = z.object({
     email: z.string().email({message: "유효한 이메일을 입력하세요."}),
@@ -51,7 +51,6 @@ const ClientCheckoutPage = () => {
             password: values.password,
             address: values.address
         };
-
 
         try {
             await client.POST('/v1/items', {

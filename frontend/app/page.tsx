@@ -1,4 +1,4 @@
-import client from "@/app/api/client";
+import {client} from "@/app/api/client";
 import ClientHomePage from "@/app/ClientHomePage";
 
 const HomePage = async () => {
