@@ -1,13 +1,15 @@
+"use client";
+
 import { Button } from "@/components/ui/button";
 
 type SidebarProps = {
-  selectedTab: "items" | "sales";
-  setSelectedTab: (tab: "items" | "sales") => void;
+  selectedTab: "items" | "sales" | "addItem";
+  setSelectedTab: (tab: "items" | "sales" | "addItem") => void;
 };
 
 const Sidebar = ({ selectedTab, setSelectedTab }: SidebarProps) => {
   return (
-    <div className="w-1/5 bg-gray-800 p-6 shadow-md flex flex-col">
+    <div className="w-64 bg-gray-800 p-4">
       <h2 className="text-lg font-bold mb-4">관리자 메뉴</h2>
       <div className="space-y-2">
         <Button
@@ -25,6 +27,15 @@ const Sidebar = ({ selectedTab, setSelectedTab }: SidebarProps) => {
           onClick={() => setSelectedTab("sales")}
         >
           매출 조회
+        </Button>
+        {/* ✅ 상품 등록 버튼 추가 */}
+        <Button
+          className={`w-full text-left ${
+            selectedTab === "addItem" ? "bg-green-500" : "bg-gray-700"
+          } hover:bg-green-600`}
+          onClick={() => setSelectedTab("addItem")}
+        >
+          상품 등록
         </Button>
       </div>
     </div>

@@ -3,12 +3,14 @@
 import { useState } from "react";
 import Sidebar from "@/components/admin/Sidebar";
 import Content from "@/components/admin/Content";
-import Footer from "../Footer";
+import ItemForm from "@/components/admin/ItemForm";
 import Header from "../Header";
 import { usePathname } from "next/navigation";
 
 const Dashboard = () => {
-  const [selectedTab, setSelectedTab] = useState<"items" | "sales">("items");
+  const [selectedTab, setSelectedTab] = useState<"items" | "sales" | "addItem">(
+    "items"
+  );
   const pathname = usePathname();
 
   return (
@@ -22,7 +24,15 @@ const Dashboard = () => {
       {/* ✅ 대시보드 본문 (헤더/푸터 제외한 영역을 정확하게 채움) */}
       <main className="flex flex-grow w-full h-[calc(100vh-4rem-2rem)]">
         <Sidebar selectedTab={selectedTab} setSelectedTab={setSelectedTab} />
-        <Content selectedTab={selectedTab} />
+        <div className="flex flex-col flex-grow p-6">
+          {selectedTab === "addItem" ? (
+            <div className="flex justify-center items-center h-full">
+              <ItemForm isEditMode={false} setSelectedTab={setSelectedTab} />
+            </div>
+          ) : (
+            <Content selectedTab={selectedTab} />
+          )}
+        </div>
       </main>
     </div>
   );
