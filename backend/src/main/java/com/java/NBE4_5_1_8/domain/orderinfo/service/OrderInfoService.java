@@ -6,9 +6,7 @@ import com.java.NBE4_5_1_8.domain.orderinfo.dto.OrderForm;
 import com.java.NBE4_5_1_8.domain.orderinfo.entity.OrderInfo;
 import com.java.NBE4_5_1_8.domain.orderinfo.entity.OrderStatus;
 import com.java.NBE4_5_1_8.domain.orderinfo.repository.OrderInfoRepository;
-import com.java.NBE4_5_1_8.domain.orderitem.dto.OrderItemDto;
 import com.java.NBE4_5_1_8.domain.orderitem.entity.OrderItem;
-import com.java.NBE4_5_1_8.domain.orderitem.repository.OrderItemRepository;
 import com.java.NBE4_5_1_8.global.exception.ServiceException;
 import jakarta.persistence.EntityExistsException;
 import jakarta.validation.constraints.NotNull;
@@ -24,24 +22,27 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class OrderInfoService {
     private final OrderInfoRepository orderInfoRepository;
-    private final OrderItemRepository orderItemRepository;
     private final ItemRepository itemRepository;
 
     @Transactional
     public Long createOrderInfo(OrderForm orderForm) {
-        Item item = itemRepository.findById(orderForm.getItemId())
-                .orElseThrow(EntityExistsException::new);
+        OrderInfo orderInfo = new OrderInfo(orderForm);
 
-        OrderInfo orderInfo = orderInfoRepository.findByMemberEmail(orderForm.getMemberEmail());
-        if (orderInfo == null) {
-            orderInfo = OrderInfo.createOrderInfo(orderForm.getMemberEmail(), orderForm.getMemberAddress());
-            orderInfoRepository.save(orderInfo);
-        }
+        List<OrderItem> orderItems = orderForm.getItemList().stream()
+                .map(dto -> {
+                    Item item = itemRepository.findById(dto.getItemId())
+                            .orElseThrow(() -> new ServiceException(HttpStatus.BAD_REQUEST, "존재하지 않는 상품입니다."));
 
-        int totalPrice = item.getPrice() * orderForm.getQuantity();
-        OrderItem orderItem = OrderItem.createOrderItem(item, orderInfo, totalPrice, orderForm.getQuantity());
-        orderItemRepository.save(orderItem);
-        return orderItem.getId();
+                    OrderItem orderItem = OrderItem.createOrderItem(item, orderInfo, dto.getQuantity());
+                    orderItem.setOrderPrice(item.getPrice() * dto.getQuantity());
+                    return orderItem;
+                })
+                .collect(Collectors.toList());
+
+        orderInfo.setOrderItems(orderItems);
+        orderInfoRepository.save(orderInfo);
+
+        return orderInfo.getOrderId();
     }
 
     public OrderInfo getOrderById(Long id) {
@@ -49,12 +50,9 @@ public class OrderInfoService {
                 .orElseThrow(() -> new ServiceException(HttpStatus.BAD_REQUEST, "존재하지 않는 주문입니다."));
     }
 
-    public List<OrderItemDto> getOrderItem(String memberEmail) {
-        OrderInfo orderInfo = orderInfoRepository.findByMemberEmail(memberEmail);
-        return orderItemRepository.findAllByOrderInfo(orderInfo)
-                .stream()
-                .map(OrderItemDto::new)
-                .collect(Collectors.toList());
+    public Long getOrderItemList(Long orderInfoId, String password) {
+        OrderInfo orderInfo = orderInfoRepository.findByOrderIdAndMemberPassword(orderInfoId, password);
+        return orderInfo.getOrderId();
     }
 
     @Transactional

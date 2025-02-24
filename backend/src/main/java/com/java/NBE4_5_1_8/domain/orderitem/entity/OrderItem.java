@@ -28,11 +28,10 @@ public class OrderItem {
     private int orderPrice;
     private int quantity;
 
-    public static OrderItem createOrderItem(Item item, OrderInfo orderInfo, int orderPrice, int quantity) {
+    public static OrderItem createOrderItem(Item item, OrderInfo orderInfo, int quantity) {
         OrderItem orderItem = new OrderItem();
         orderItem.setItem(item);
         orderItem.setOrderInfo(orderInfo);
-        orderItem.setOrderPrice(orderPrice);
         orderItem.setQuantity(quantity);
         return orderItem;
     }
