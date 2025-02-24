@@ -26,7 +26,7 @@ public class ApiV1OrderInfoController {
     public RsData<Long> createOrder(@RequestBody OrderForm orderForm) {
         Long orderItemId = orderInfoService.createOrderInfo(orderForm);
         return RsData.success(
-                HttpStatus.CREATED,
+                HttpStatus.CREATED, orderItemId,
                 SuccessMessage.ORDER_CREATED);
     }
 
@@ -37,7 +37,7 @@ public class ApiV1OrderInfoController {
 
         Long orderItemId = orderInfoService.getOrderItemList(orderInfoId, password);
         return RsData.success(
-                HttpStatus.OK,
+                HttpStatus.OK, orderItemId,
                 SuccessMessage.ORDER_LIST_FETCHED);
     }
 
