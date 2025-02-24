@@ -7,8 +7,8 @@ import com.java.NBE4_5_1_8.domain.orderinfo.entity.OrderInfo;
 import com.java.NBE4_5_1_8.domain.orderinfo.entity.OrderStatus;
 import com.java.NBE4_5_1_8.domain.orderinfo.repository.OrderInfoRepository;
 import com.java.NBE4_5_1_8.domain.orderitem.entity.OrderItem;
+import com.java.NBE4_5_1_8.domain.orderitem.repository.OrderItemRepository;
 import com.java.NBE4_5_1_8.global.exception.ServiceException;
-import jakarta.persistence.EntityExistsException;
 import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -23,6 +23,7 @@ import java.util.stream.Collectors;
 public class OrderInfoService {
     private final OrderInfoRepository orderInfoRepository;
     private final ItemRepository itemRepository;
+    private final OrderItemRepository orderItemRepository;
 
     @Transactional
     public Long createOrderInfo(OrderForm orderForm) {
