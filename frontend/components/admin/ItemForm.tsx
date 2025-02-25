@@ -13,36 +13,31 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { client } from "@/app/api/client";
+import { clientFormData } from "@/app/api/client";
 
 type ItemFormProps = {
   itemFormProps?: {
     itemName?: string;
     category?: string;
     description?: string;
-    stockQuantity?: number;
     price?: number;
+    stockQuantity?: number;
   };
   itemId?: number;
   isEditMode: boolean;
   setSelectedTab: (tab: "items") => void;
 };
 
-const ItemForm = ({
-  itemFormProps,
-  isEditMode,
-  itemId,
-  setSelectedTab,
-}: ItemFormProps) => {
+const ItemForm = ({ itemFormProps, isEditMode, itemId }: ItemFormProps) => {
   const router = useRouter();
   const [formData, setFormData] = useState({
     itemName: itemFormProps?.itemName ?? "",
     category: itemFormProps?.category ?? "",
     description: itemFormProps?.description ?? "",
-    stockQuantity: itemFormProps?.stockQuantity ?? 0,
     price: itemFormProps?.price ?? 0,
-    imageUrl: "/static/default.png",
+    stockQuantity: itemFormProps?.stockQuantity ?? 0,
   });
+  const [itemImage, setItemImage] = useState<File | null>(null);
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
@@ -50,57 +45,65 @@ const ItemForm = ({
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
+  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files.length > 0) {
+      setItemImage(e.target.files[0]);
+    }
+  };
+
   const handleDelete = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!itemId) {
-      console.error("itemId가 존재하지 않습니다.");
-      return;
-    }
-
-    if (confirm("삭제하시겠습니까?")) {
-      try {
-        await client.DELETE("/v1/items/{itemId}", {
-          params: { path: { itemId } },
-        });
-        setSelectedTab("items");
-      } catch (error) {
-        console.error("상품 삭제 실패:", error);
-      }
+    if (confirm("삭제하시겠습니까?") && itemId) {
+      await clientFormData.DELETE("/v1/items/{itemId}", {
+        params: { path: { itemId } }, // 기존 DELETE 방식 유지
+        credentials: "include",
+      });
+      router.push("/admin/items");
     }
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setErrorMessage("");
+
+    // FormData를 사용하지 않고, query 파라미터에 포함
+    const requestData = {
+      requestForm: {
+        itemName: formData.itemName,
+        category: formData.category,
+        description: formData.description,
+        stockQuantity: formData.stockQuantity,
+        price: formData.price,
+        itemImage: itemImage ? itemImage.name : undefined, // 이미지 파일명만 포함
+      },
+    };
 
     try {
-      const response = await fetch("/api/admin/login", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(formData),
-      });
-
-      const data = await response.json(); // 응답을 먼저 JSON으로 변환
-
-      if (!response.ok) {
-        setErrorMessage(data.message || "아이디 또는 비밀번호가 틀렸습니다.");
-        return;
-      }
-
-      if (data.success) {
-        router.push("/admin/items"); // 로그인 성공 시 페이지 이동
+      if (isEditMode && itemId) {
+        await clientFormData.PUT("/v1/items/{itemId}", {
+          params: {
+            path: { itemId }, // 기존 방식 유지
+            query: requestData, // `query` 파라미터 활용
+          },
+          credentials: "include",
+        });
       } else {
-        setErrorMessage("아이디 또는 비밀번호가 틀렸습니다.");
+        await clientFormData.POST("/v1/items", {
+          params: {
+            query: requestData, // `query` 파라미터 활용
+          },
+          credentials: "include",
+        });
       }
+
+      router.push("/admin/items");
     } catch (error) {
-      console.error("로그인 오류:", error);
-      setErrorMessage("서버와 연결할 수 없습니다. 나중에 다시 시도해주세요.");
+      console.error("상품 등록/수정 중 오류 발생:", error);
     }
   };
 
   return (
     <div className="flex flex-col justify-center items-center">
-      <Card className="w-[350px] bg-gray-800 text-white">
+      <Card className="w-[400px] bg-gray-800 text-white">
         <form onSubmit={handleSubmit}>
           <CardHeader>
             <CardTitle>{isEditMode ? "상품 수정" : "상품 등록"}</CardTitle>
@@ -115,6 +118,15 @@ const ItemForm = ({
                   value={formData.itemName}
                   onChange={handleChange}
                   required
+                />
+
+                <Label htmlFor="itemImage">상품 이미지</Label>
+                <Input
+                  id="itemImage"
+                  name="itemImage"
+                  type="file"
+                  accept="image/*"
+                  onChange={handleImageChange}
                 />
 
                 <Label htmlFor="category">카테고리</Label>
@@ -134,22 +146,22 @@ const ItemForm = ({
                   onChange={handleChange}
                 />
 
-                <Label htmlFor="stockQuantity">재고 수량</Label>
-                <Input
-                  id="stockQuantity"
-                  type="number"
-                  name="stockQuantity"
-                  value={formData.stockQuantity}
-                  onChange={handleChange}
-                  required
-                />
-
                 <Label htmlFor="price">가격</Label>
                 <Input
                   id="price"
                   type="number"
                   name="price"
                   value={formData.price}
+                  onChange={handleChange}
+                  required
+                />
+
+                <Label htmlFor="stockQuantity">수량</Label>
+                <Input
+                  id="stockQuantity"
+                  type="number"
+                  name="stockQuantity"
+                  value={formData.stockQuantity}
                   onChange={handleChange}
                   required
                 />
@@ -173,6 +185,3 @@ const ItemForm = ({
 };
 
 export default ItemForm;
-function setErrorMessage(arg0: string) {
-  throw new Error("Function not implemented.");
-}

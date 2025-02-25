@@ -12,8 +12,8 @@ const Sidebar = ({ selectedTab, setSelectedTab }: SidebarProps) => {
 
   const handleLogout = async () => {
     await fetch("/api/admin/logout", { method: "POST" });
-    localStorage.removeItem("isAuthenticated"); // ✅ 로그아웃 후 로컬 스토리지 업데이트
-    router.replace("/"); // ✅ 로그인 페이지로 이동
+    localStorage.removeItem("isAuthenticated");
+    router.replace("/");
   };
 
   return (
@@ -45,7 +45,6 @@ const Sidebar = ({ selectedTab, setSelectedTab }: SidebarProps) => {
         </button>
       </div>
 
-      {/* ✅ 사이드바 하단에 로그아웃 버튼 추가 */}
       <button className="w-full bg-red-500 p-4 mt-auto" onClick={handleLogout}>
         로그아웃
       </button>
