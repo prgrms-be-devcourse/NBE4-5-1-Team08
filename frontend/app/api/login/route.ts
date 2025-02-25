@@ -6,7 +6,6 @@ export async function POST(req: Request) {
   const validAdminId = process.env.ADMIN_ID;
   const validPassword = process.env.ADMIN_PASSWORD;
 
-  // 입력값과 비교
   if (adminId === validAdminId && password === validPassword) {
     return NextResponse.json({ success: true, message: "로그인 성공" });
   } else {
