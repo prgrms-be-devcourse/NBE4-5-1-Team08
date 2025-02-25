@@ -1,6 +1,6 @@
 package com.java.NBE4_5_1_8.domain.email.service;
 
-import com.java.NBE4_5_1_8.domain.orderitem.entity.OrderItem;
+import com.java.NBE4_5_1_8.domain.orderinfo.entity.OrderItem;
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
 import lombok.RequiredArgsConstructor;

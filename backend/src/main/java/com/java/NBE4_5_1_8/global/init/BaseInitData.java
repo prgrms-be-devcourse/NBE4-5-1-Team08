@@ -1,13 +1,8 @@
 package com.java.NBE4_5_1_8.global.init;
 
 import com.java.NBE4_5_1_8.domain.item.dto.ItemForm;
-import com.java.NBE4_5_1_8.domain.item.entity.Item;
 import com.java.NBE4_5_1_8.domain.item.service.ItemService;
-import com.java.NBE4_5_1_8.domain.orderinfo.dto.OrderForm;
-import com.java.NBE4_5_1_8.domain.orderinfo.entity.OrderInfo;
-import com.java.NBE4_5_1_8.domain.orderinfo.entity.OrderStatus;
 import com.java.NBE4_5_1_8.domain.orderinfo.service.OrderInfoService;
-import com.java.NBE4_5_1_8.domain.orderitem.dto.OrderItemDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.ApplicationRunner;
@@ -18,8 +13,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.List;
-import java.util.stream.IntStream;
 import java.util.Random;
 
 

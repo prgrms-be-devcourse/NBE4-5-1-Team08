@@ -1,4 +1,4 @@
-package com.java.NBE4_5_1_8.domain.orderitem.dto;
+package com.java.NBE4_5_1_8.domain.orderinfo.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

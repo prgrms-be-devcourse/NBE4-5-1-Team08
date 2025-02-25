@@ -1,8 +1,7 @@
-package com.java.NBE4_5_1_8.domain.orderitem.entity;
+package com.java.NBE4_5_1_8.domain.orderinfo.entity;
 
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.java.NBE4_5_1_8.domain.item.entity.Item;
-import com.java.NBE4_5_1_8.domain.orderinfo.entity.OrderInfo;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
