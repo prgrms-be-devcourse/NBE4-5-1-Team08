@@ -4,22 +4,37 @@ import {useCallback, useEffect, useState} from "react";
 import {Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle} from "@/components/ui/card";
 import {Dialog, DialogContent, DialogDescription, DialogFooter, DialogTitle} from "@/components/ui/dialog";
 import {Button} from "@/components/ui/button";
-import {components} from "@/lib/api/_schema";
+import {components} from "@/lib/api/schema";
 import {Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger} from "@/components/ui/sheet";
 import {Input} from "@/components/ui/input";
 import Link from "next/link";
 import {CartItem} from "@/type/types";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faCartPlus, faCartShopping} from "@fortawesome/free-solid-svg-icons";
-
+import {
+    Select,
+    SelectContent,
+    SelectGroup,
+    SelectItem,
+    SelectLabel,
+    SelectTrigger,
+    SelectValue
+} from "@/components/ui/select";
+import Image from "next/image";
 
 type ItemDto = components["schemas"]["ItemDto"];
-const HomeClientPage = ({itemList}: { itemList: ItemDto[] }) => {
+
+const HomeClientPage = ({itemList, categoryList}: {
+    itemList: ItemDto[];
+    categoryList: { categoryId: number; categoryName: string }[]
+}) => {
     const [selectedItem, setSelectedItem] = useState<ItemDto | null>(null);
     const [quantity, setQuantity] = useState<number>(1);
     const [openDialog, setOpenDialog] = useState<boolean>(false);
     const [openSheet, setOpenSheet] = useState<boolean>(false);
     const [cartItemList, setCartItemList] = useState<CartItem[]>([]);
+    const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
+    const [filteredItemList, setFilteredItemList] = useState<ItemDto[]>(itemList);
 
     const getCart = useCallback(() => {
         return JSON.parse(localStorage.getItem("cart") || "[]") as CartItem[];
@@ -27,7 +42,7 @@ const HomeClientPage = ({itemList}: { itemList: ItemDto[] }) => {
 
     const addToCart = (product: CartItem): void => {
         if (quantity < 1) {
-            alert("1개 이상 주문해야합니다.");
+            alert("1개 이상 주문해야 합니다.");
             return;
         }
         const cart: CartItem[] = JSON.parse(localStorage.getItem("cart") || "[]");
@@ -45,50 +60,75 @@ const HomeClientPage = ({itemList}: { itemList: ItemDto[] }) => {
 
     const deleteFromCart = (itemId: number): void => {
         const cart: CartItem[] = JSON.parse(localStorage.getItem("cart") || "[]");
-
         const updatedCart = cart.filter((item) => item.itemId !== itemId);
-
         localStorage.setItem("cart", JSON.stringify(updatedCart));
         setCartItemList(updatedCart);
     };
 
     useEffect(() => {
         setCartItemList(getCart());
-    }, [getCart])
+    }, [getCart]);
+
+    useEffect(() => {
+        if (categoryList.length > 0) {
+            setSelectedCategory(categoryList[0].categoryName);
+        }
+    }, [categoryList]);
+
+    useEffect(() => {
+        if (!selectedCategory) {
+            setFilteredItemList(itemList);
+        } else {
+            setFilteredItemList(itemList.filter(item => item.category === selectedCategory));
+        }
+    }, [selectedCategory, itemList]);
+
 
 
     return (
         <div className="p-4">
-            {/*TODO select 박스로 바꾸고 itemList 도 filter 해주도록*/}
-            <div className="mb-4">category</div>
+            <Select onValueChange={(value) => setSelectedCategory(value)}>
+                <SelectTrigger className="w-[180px]">
+                    <SelectValue placeholder="카테고리 선택"/>
+                </SelectTrigger>
+                <SelectContent>
+                    <SelectGroup>
+                        <SelectLabel>카테고리</SelectLabel>
+                        {categoryList.map(category => (
+                            <SelectItem key={category.categoryId} value={category.categoryName}>
+                                {category.categoryName}
+                            </SelectItem>
+                        ))}
+                    </SelectGroup>
+                </SelectContent>
+            </Select>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-                {itemList.map((item) => (
-                        <Card
-                            key={item.itemId}
-                            className="cursor-pointer hover:shadow-lg transition-shadow"
-                            onClick={() => {
-                                setSelectedItem(item);
-                                setOpenDialog(true);
-                            }}
-                        >
-                            <CardHeader>
-                                <CardTitle>{item.itemName}</CardTitle>
-                            </CardHeader>
+                {filteredItemList.map((item) => (
+                    <Card
+                        key={item.itemId}
+                        className="cursor-pointer hover:shadow-lg transition-shadow"
+                        onClick={() => {
+                            setSelectedItem(item);
+                            setOpenDialog(true);
+                        }}
+                    >
+                        <CardHeader>
+                            <CardTitle>{item.itemName}</CardTitle>
+                        </CardHeader>
+                        <CardContent>
                             <CardContent>
-                                <CardContent>
-                                    <p>사진 들어갈 공간</p>
-                                </CardContent>
+                                <Image src={process.env.NEXT_PUBLIC_API_BASE_URL + '/' + item.imageUrl}
+                                       alt={"item-image"}/>
                             </CardContent>
-                            <CardFooter>
-                                <CardDescription>{item.description}</CardDescription>
-                            </CardFooter>
-                        </Card>
-                    )
-                )}
+                        </CardContent>
+                        <CardFooter>
+                            <CardDescription>{item.description}</CardDescription>
+                        </CardFooter>
+                    </Card>
+                ))}
             </div>
 
-            {/*dialog area*/}
             <Dialog open={openDialog} onOpenChange={(isOpen) => {
                 setOpenDialog(isOpen);
                 if (!isOpen) setQuantity(1);
@@ -97,8 +137,12 @@ const HomeClientPage = ({itemList}: { itemList: ItemDto[] }) => {
                     <DialogTitle>{selectedItem?.itemName ?? "Item Title"}</DialogTitle>
                     <DialogDescription>{selectedItem?.description ?? "Item Description"}</DialogDescription>
                     <DialogFooter>
-                        <Input name={"quantity"} type={"number"} onChange={(e) => setQuantity(Number(e.target.value))}
-                               value={quantity}></Input>
+                        <Input
+                            name={"quantity"}
+                            type={"number"}
+                            onChange={(e) => setQuantity(Number(e.target.value))}
+                            value={quantity}
+                        />
                         <Button type={"submit"} variant={"outline"} onClick={() => addToCart({
                             itemId: selectedItem!.itemId,
                             itemName: selectedItem!.itemName,
@@ -109,8 +153,6 @@ const HomeClientPage = ({itemList}: { itemList: ItemDto[] }) => {
                 </DialogContent>
             </Dialog>
 
-
-            {/*sheet area*/}
             <Sheet>
                 <SheetTrigger asChild>
                     <Button className={"rounded-full w-14 h-14 fixed bottom-20 right-5"}
@@ -139,16 +181,16 @@ const HomeClientPage = ({itemList}: { itemList: ItemDto[] }) => {
                         )}
                     </div>
                     <div className={"flex justify-between mt-5"}>
-                        {cartItemList.length > 0 &&
+                        {cartItemList.length > 0 && (
                             <div className="grid grid-cols-4 items-center gap-4 w-full">
                                 <div></div>
                                 <div></div>
-                                <p>{cartItemList.length > 0 ? cartItemList.reduce((sum, item) => sum + item.quantity * item.price, 0) : 0} 원</p>
+                                <p>{cartItemList.reduce((sum, item) => sum + item.quantity * item.price, 0)} 원</p>
                                 <Link href={"/checkout"}>
                                     <Button className={"w-full"} type={"submit"}>주문</Button>
                                 </Link>
                             </div>
-                        }
+                        )}
                     </div>
                 </SheetContent>
             </Sheet>
