@@ -52,14 +52,14 @@ public class OrderInfoService {
         return orderInfo;
     }
 
-    public OrderInfo getOrderById(Long id) {
+    public OrderInfo getOrderInfoById(Long id) {
         return orderInfoRepository.findById(id)
                 .orElseThrow(() -> new ServiceException(HttpStatus.BAD_REQUEST, ErrorMessage.ORDER_NOT_FOUND));
     }
 
-    public Long getOrderItemList(Long orderId, String memberPassword) {
+    public OrderInfo getOrderInfoByIdAndMemberPassword(Long orderId, String memberPassword) {
         OrderInfo orderInfo = orderInfoRepository.findByOrderIdAndMemberPassword(orderId, memberPassword);
-        return orderInfo.getOrderId();
+        return orderInfo;
     }
 
     @Transactional
@@ -70,8 +70,8 @@ public class OrderInfoService {
     }
 
     @Transactional
-    public void cancelOrder(Long orderId) {
-        OrderInfo orderInfo = getOrderById(orderId);
+    public void cancelOrderInfo(Long orderId) {
+        OrderInfo orderInfo = getOrderInfoById(orderId);
 
         if (!orderInfo.getOrderStatus().equals(OrderStatus.ORDERED)) {
             throw new ServiceException(HttpStatus.BAD_REQUEST, ErrorMessage.ORDER_CANNOT_BE_DELETED);

@@ -31,19 +31,19 @@ public class ApiV1OrderInfoController {
     }
 
     @GetMapping("{orderId}")
-    public RsData<Long> getOrderItemList(
+    public RsData<OrderInfo> getOrderItemList(
             @RequestHeader("memberPassword") String memberPassword,
             @PathVariable("orderId") Long orderId) {
 
-        Long orderItemId = orderInfoService.getOrderItemList(orderId, memberPassword);
+        OrderInfo OrderInfo = orderInfoService.getOrderInfoByIdAndMemberPassword(orderId, memberPassword);
         return RsData.success(
-                HttpStatus.OK, orderItemId,
+                HttpStatus.OK, OrderInfo,
                 SuccessMessage.ORDER_LIST_FETCHED);
     }
 
     @PutMapping("/{orderId}")
     public RsData<OrderInfo> updateOrderInfo(@PathVariable Long orderId, @RequestBody @Valid UpdateReqBody updateReqBody) {
-        OrderInfo orderInfo = orderInfoService.getOrderById(orderId);
+        OrderInfo orderInfo = orderInfoService.getOrderInfoById(orderId);
         orderInfoService.updateOrderInfo(
                 orderInfo,
                 updateReqBody.orderStatus(),
@@ -62,7 +62,7 @@ public class ApiV1OrderInfoController {
 
     @DeleteMapping("/{orderId}")
     public RsData<Void> deleteOrderInfo(@PathVariable Long orderId) {
-        orderInfoService.cancelOrder(orderId);
+        orderInfoService.cancelOrderInfo(orderId);
         return RsData.success(
                 HttpStatus.OK,
                 SuccessMessage.ORDER_DELETED);
