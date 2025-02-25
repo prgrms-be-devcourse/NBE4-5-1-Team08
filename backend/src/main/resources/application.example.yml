@@ -17,6 +17,18 @@ spring:
     console:
       enabled: false                                 # H2 콘솔 비활성화 (MySQL 사용 시)
 
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: { }
+    password: { }
+    properties:
+      mail.smtp.debug: true
+      mail.smtp.connectiontimeout: 1000
+      mail.starttls.enable: true
+      mail.smtp.auth: true
+      mail.smtp.starttls.required: true
+
 server:
   port: 8080                                         # 애플리케이션 서버 포트
   servlet:
