@@ -1,6 +1,5 @@
 package com.java.NBE4_5_1_8.domain.orderinfo.entity;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.java.NBE4_5_1_8.domain.orderinfo.dto.OrderForm;
 import com.java.NBE4_5_1_8.global.entity.BaseTime;
 import jakarta.persistence.*;
@@ -29,7 +28,6 @@ public class OrderInfo extends BaseTime {
     private String memberPassword;
 
     @OneToMany(mappedBy = "orderInfo", cascade = CascadeType.ALL)
-    @JsonBackReference
     private List<OrderItem> orderItems = new ArrayList<>();
 
     public OrderInfo(OrderForm orderForm) {

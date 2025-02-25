@@ -1,10 +1,11 @@
 package com.java.NBE4_5_1_8.domain.orderinfo.controller;
 
 import com.java.NBE4_5_1_8.domain.orderinfo.dto.OrderForm;
+import com.java.NBE4_5_1_8.domain.orderinfo.dto.OrderInfoDto;
 import com.java.NBE4_5_1_8.domain.orderinfo.entity.OrderInfo;
+import com.java.NBE4_5_1_8.domain.orderinfo.entity.OrderItem;
 import com.java.NBE4_5_1_8.domain.orderinfo.entity.OrderStatus;
 import com.java.NBE4_5_1_8.domain.orderinfo.service.OrderInfoService;
-import com.java.NBE4_5_1_8.domain.orderinfo.entity.OrderItem;
 import com.java.NBE4_5_1_8.global.message.SuccessMessage;
 import com.java.NBE4_5_1_8.global.response.RsData;
 import jakarta.validation.Valid;
@@ -31,13 +32,13 @@ public class ApiV1OrderInfoController {
     }
 
     @GetMapping("{orderId}")
-    public RsData<OrderInfo> getOrderItemList(
+    public RsData<OrderInfoDto> getOrderItemList(
             @RequestHeader("memberPassword") String memberPassword,
             @PathVariable("orderId") Long orderId) {
 
-        OrderInfo OrderInfo = orderInfoService.getOrderInfoByIdAndMemberPassword(orderId, memberPassword);
+        OrderInfoDto OrderInfoDto = orderInfoService.getOrderInfoByIdAndMemberPassword(orderId, memberPassword);
         return RsData.success(
-                HttpStatus.OK, OrderInfo,
+                HttpStatus.OK, OrderInfoDto,
                 SuccessMessage.ORDER_LIST_FETCHED);
     }
 

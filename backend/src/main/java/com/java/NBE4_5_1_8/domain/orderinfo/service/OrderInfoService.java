@@ -4,10 +4,11 @@ import com.java.NBE4_5_1_8.domain.email.service.EmailService;
 import com.java.NBE4_5_1_8.domain.item.entity.Item;
 import com.java.NBE4_5_1_8.domain.item.repository.ItemRepository;
 import com.java.NBE4_5_1_8.domain.orderinfo.dto.OrderForm;
+import com.java.NBE4_5_1_8.domain.orderinfo.dto.OrderInfoDto;
 import com.java.NBE4_5_1_8.domain.orderinfo.entity.OrderInfo;
+import com.java.NBE4_5_1_8.domain.orderinfo.entity.OrderItem;
 import com.java.NBE4_5_1_8.domain.orderinfo.entity.OrderStatus;
 import com.java.NBE4_5_1_8.domain.orderinfo.repository.OrderInfoRepository;
-import com.java.NBE4_5_1_8.domain.orderinfo.entity.OrderItem;
 import com.java.NBE4_5_1_8.domain.orderinfo.repository.OrderItemRepository;
 import com.java.NBE4_5_1_8.global.exception.ServiceException;
 import com.java.NBE4_5_1_8.global.message.ErrorMessage;
@@ -58,7 +59,7 @@ public class OrderInfoService {
                 .orElseThrow(() -> new ServiceException(HttpStatus.BAD_REQUEST, ErrorMessage.ORDER_NOT_FOUND));
     }
 
-    public OrderInfo getOrderInfoByIdAndMemberPassword(Long orderId, String memberPassword) {
+    public OrderInfoDto getOrderInfoByIdAndMemberPassword(Long orderId, String memberPassword) {
         return orderInfoRepository.findByOrderIdAndMemberPassword(orderId, memberPassword);
     }
 
