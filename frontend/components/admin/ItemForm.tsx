@@ -43,7 +43,6 @@ const ItemForm = ({ isEditMode, itemId, setSelectedTab }: ItemFormProps) => {
       setItemImage(e.target.files[0]);
     }
   };
-
   const handleSubmit = async (e: { preventDefault: () => void }) => {
     e.preventDefault();
 
@@ -59,39 +58,21 @@ const ItemForm = ({ isEditMode, itemId, setSelectedTab }: ItemFormProps) => {
     }
 
     try {
-      if (isEditMode && itemId) {
-        if (itemImage) {
-          // ✅ FormData 전송 (이미지 포함)
-          await clientFormData.PUT("/v1/items/{itemId}", {
-            params: { path: { itemId } }, // ✅ `query` 제거
-            body: formDataToSend, // ✅ FormData 직접 전송
-          });
-        } else {
-          // ✅ JSON 데이터 전송 (이미지 없음)
-          await client.PUT("/v1/items/{itemId}", {
-            params: {
-              path: { itemId },
-              query: {
-                requestForm: {
-                  itemName: formData.itemName,
-                  category: formData.category,
-                  description: formData.description,
-                  stockQuantity: formData.stockQuantity,
-                  price: formData.price,
-                },
-              },
-            },
-          });
-        }
-      } else {
-        await clientFormData.POST(`/v1/items`, {
-          body: formDataToSend, // ✅ FormData 직접 전송
-        });
+      const response = await fetch("http://localhost:8080/api/v1/items", {
+        method: "POST",
+        body: formDataToSend, // ✅ FormData 직접 전송
+      });
+
+      if (!response.ok) {
+        throw new Error(`서버 응답 오류: ${response.status}`);
       }
 
-      setSelectedTab?.("items"); // ✅ 등록 후 아이템 리스트로 이동
+      console.log("✅ 상품 등록 성공!");
+
+      setSelectedTab?.("items"); // ✅ 등록 후 상품 목록으로 이동
+      router.refresh(); // ✅ 리스트 새로고침
     } catch (error) {
-      console.error("상품 등록/수정 중 오류 발생:", error);
+      console.error("❌ 상품 등록 중 오류 발생:", error);
     }
   };
 
