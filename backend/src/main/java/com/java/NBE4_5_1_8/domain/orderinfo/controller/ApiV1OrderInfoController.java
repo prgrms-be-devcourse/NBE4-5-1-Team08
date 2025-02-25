@@ -62,17 +62,6 @@ public class ApiV1OrderInfoController {
 
     @DeleteMapping("/{orderId}")
     public RsData<Void> deleteOrderInfo(@PathVariable Long orderId) {
-//        orderInfoService.deleteOrderInfo(orderId);
-//        return RsData.success(
-//                HttpStatus.OK,
-//                "%d번 주문이 삭제되었습니다.".formatted(orderId));
-        return cancelOrder(orderId);
-    }
-
-    @PostMapping("/{orderId}/cancel")
-    public RsData<Void> cancelOrder(
-            @PathVariable Long orderId
-    ) {
         orderInfoService.cancelOrder(orderId);
         return RsData.success(
                 HttpStatus.OK,

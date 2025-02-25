@@ -70,17 +70,6 @@ public class OrderInfoService {
     }
 
     @Transactional
-    public void deleteOrderInfo(Long orderId) {
-        OrderInfo orderInfo = getOrderById(orderId);
-
-        if (!orderInfo.getOrderStatus().equals(OrderStatus.ORDERED)) {
-            throw new ServiceException(HttpStatus.BAD_REQUEST, ErrorMessage.ITEM_CANNOT_BE_DELETED);
-        }
-
-        orderInfoRepository.delete(orderInfo);
-    }
-
-    @Transactional
     public void cancelOrder(Long orderId) {
         OrderInfo orderInfo = getOrderById(orderId);
 
