@@ -1,6 +1,6 @@
 "use client";
 
-import { Button } from "@/components/ui/button";
+import { useRouter } from "next/navigation";
 
 type SidebarProps = {
   selectedTab: "items" | "sales" | "addItem";
@@ -8,36 +8,47 @@ type SidebarProps = {
 };
 
 const Sidebar = ({ selectedTab, setSelectedTab }: SidebarProps) => {
+  const router = useRouter();
+
+  const handleLogout = async () => {
+    await fetch("/api/admin/logout", { method: "POST" });
+    localStorage.removeItem("isAuthenticated"); // ✅ 로그아웃 후 로컬 스토리지 업데이트
+    router.replace("/"); // ✅ 로그인 페이지로 이동
+  };
+
   return (
-    <div className="w-64 bg-gray-800 p-4">
-      <h2 className="text-lg font-bold mb-4">관리자 메뉴</h2>
-      <div className="space-y-2">
-        <Button
-          className={`w-full text-left ${
-            selectedTab === "items" ? "bg-blue-500" : "bg-gray-700"
-          } hover:bg-blue-600`}
+    <div className="w-64 bg-gray-800 text-white h-full flex flex-col justify-between">
+      <div>
+        <button
+          className={`w-full p-4 ${
+            selectedTab === "items" ? "bg-gray-700" : ""
+          }`}
           onClick={() => setSelectedTab("items")}
         >
           전체 상품 조회
-        </Button>
-        <Button
-          className={`w-full text-left ${
-            selectedTab === "sales" ? "bg-blue-500" : "bg-gray-700"
-          } hover:bg-blue-600`}
+        </button>
+        <button
+          className={`w-full p-4 ${
+            selectedTab === "sales" ? "bg-gray-700" : ""
+          }`}
           onClick={() => setSelectedTab("sales")}
         >
           매출 조회
-        </Button>
-        {/* ✅ 상품 등록 버튼 추가 */}
-        <Button
-          className={`w-full text-left ${
-            selectedTab === "addItem" ? "bg-green-500" : "bg-gray-700"
-          } hover:bg-green-600`}
+        </button>
+        <button
+          className={`w-full p-4 ${
+            selectedTab === "addItem" ? "bg-gray-700" : ""
+          }`}
           onClick={() => setSelectedTab("addItem")}
         >
           상품 등록
-        </Button>
+        </button>
       </div>
+
+      {/* ✅ 사이드바 하단에 로그아웃 버튼 추가 */}
+      <button className="w-full bg-red-500 p-4 mt-auto" onClick={handleLogout}>
+        로그아웃
+      </button>
     </div>
   );
 };

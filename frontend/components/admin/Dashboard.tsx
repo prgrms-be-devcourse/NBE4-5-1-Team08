@@ -1,39 +1,63 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
 import Sidebar from "@/components/admin/Sidebar";
 import Content from "@/components/admin/Content";
 import ItemForm from "@/components/admin/ItemForm";
-import Header from "../Header";
-import { usePathname } from "next/navigation";
 
 const Dashboard = () => {
+  const router = useRouter();
   const [selectedTab, setSelectedTab] = useState<"items" | "sales" | "addItem">(
     "items"
   );
-  const pathname = usePathname();
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const checkAuthStatus = async () => {
+      try {
+        const response = await fetch("/api/admin/me");
+        const data = await response.json();
+        if (!data.authenticated) {
+          router.replace("/admin/login");
+        } else {
+          setIsAuthenticated(true);
+        }
+      } catch (error) {
+        router.replace("/admin/login");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    checkAuthStatus();
+  }, []);
+
+  if (loading) {
+    return (
+      <div className="flex justify-center items-center h-screen">
+        Loading...
+      </div>
+    );
+  }
+
+  if (!isAuthenticated) {
+    return null;
+  }
 
   return (
-    <div className="absolute inset-0 w-screen h-screen flex flex-col bg-gray-900 text-white !p-0 !m-0">
-      {/* ✅ 헤더 유지 */}
-      <Header />
-
-      {/* ✅ 헤더 아래 검정 구분선 추가 */}
-      <div className="border-b border-gray-800"></div>
-
-      {/* ✅ 대시보드 본문 (헤더/푸터 제외한 영역을 정확하게 채움) */}
-      <main className="flex flex-grow w-full h-[calc(100vh-4rem-2rem)]">
-        <Sidebar selectedTab={selectedTab} setSelectedTab={setSelectedTab} />
-        <div className="flex flex-col flex-grow p-6">
-          {selectedTab === "addItem" ? (
-            <div className="flex justify-center items-center h-full">
-              <ItemForm isEditMode={false} setSelectedTab={setSelectedTab} />
-            </div>
-          ) : (
-            <Content selectedTab={selectedTab} />
-          )}
-        </div>
-      </main>
+    <div className="flex w-full h-screen bg-gray-900 text-white">
+      <Sidebar selectedTab={selectedTab} setSelectedTab={setSelectedTab} />
+      <div className="flex flex-col flex-grow p-6 h-full">
+        {selectedTab === "addItem" ? (
+          <div className="flex justify-center items-center h-full">
+            <ItemForm isEditMode={false} setSelectedTab={setSelectedTab} />
+          </div>
+        ) : (
+          <Content selectedTab={selectedTab} />
+        )}
+      </div>
     </div>
   );
 };

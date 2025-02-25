@@ -41,7 +41,7 @@ const ItemForm = ({
     description: itemFormProps?.description ?? "",
     stockQuantity: itemFormProps?.stockQuantity ?? 0,
     price: itemFormProps?.price ?? 0,
-    imageUrl: "/static/default.png", // ✅ 기본 이미지 URL 설정
+    imageUrl: "/static/default.png",
   });
 
   const handleChange = (
@@ -71,24 +71,30 @@ const ItemForm = ({
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setErrorMessage("");
+
     try {
-      if (isEditMode) {
-        if (!itemId) {
-          console.error("수정할 itemId가 존재하지 않습니다.");
-          return;
-        }
-        await client.PUT("/v1/items/{itemId}", {
-          params: { path: { itemId } },
-          body: formData,
-        });
-      } else {
-        await client.POST("/v1/items", {
-          body: formData,
-        });
+      const response = await fetch("/api/admin/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(formData),
+      });
+
+      const data = await response.json(); // 응답을 먼저 JSON으로 변환
+
+      if (!response.ok) {
+        setErrorMessage(data.message || "아이디 또는 비밀번호가 틀렸습니다.");
+        return;
       }
-      setSelectedTab("items");
+
+      if (data.success) {
+        router.push("/admin/items"); // 로그인 성공 시 페이지 이동
+      } else {
+        setErrorMessage("아이디 또는 비밀번호가 틀렸습니다.");
+      }
     } catch (error) {
-      console.error("상품 등록/수정 실패:", error);
+      console.error("로그인 오류:", error);
+      setErrorMessage("서버와 연결할 수 없습니다. 나중에 다시 시도해주세요.");
     }
   };
 
@@ -167,3 +173,6 @@ const ItemForm = ({
 };
 
 export default ItemForm;
+function setErrorMessage(arg0: string) {
+  throw new Error("Function not implemented.");
+}
