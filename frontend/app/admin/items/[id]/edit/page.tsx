@@ -1,4 +1,4 @@
-import client from "@/app/api/client";
+import {client} from "@/app/api/client";
 import ItemForm from "@/components/items/ItemForm";
 
 const EditItemPage = async ({params}: { params: { id: number } }) => {
