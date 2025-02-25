@@ -6,6 +6,7 @@ import com.java.NBE4_5_1_8.domain.item.repository.ItemRepository;
 import com.java.NBE4_5_1_8.global.exception.ServiceException;
 import com.java.NBE4_5_1_8.global.message.ErrorMessage;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -22,29 +23,31 @@ import java.util.List;
 @RequiredArgsConstructor
 public class ItemService {
     private final ItemRepository itemRepository;
-    private static final String STATIC_DIR = "src/main/resources/static/";
+
+    @Value("${file.upload-dir}")
+    private String itemsDir;
 
     private String saveImage(MultipartFile file, Long itemId) {
         try {
             String fileName = "item" + itemId + "." + getFileExtension(file);
-            Path filePath = Paths.get(STATIC_DIR, fileName);
+            Path filePath = Paths.get(itemsDir, fileName);
 
             if (!Files.exists(filePath.getParent())) {
                 Files.createDirectories(filePath.getParent());
             }
 
             Files.copy(file.getInputStream(), filePath, StandardCopyOption.REPLACE_EXISTING);
-            return "/static/" + fileName;
+            return "/items/" + fileName;
 
         } catch (IOException e) {
             System.out.println("이미지 업로드 실패: " + e.getMessage());
-            return "/static/default.png"; // 추후 수정 필요
+            return "/items/default.png"; // 추후 수정 필요
         }
     }
 
     private String getFileExtension(MultipartFile file) {
         String fileName = file.getOriginalFilename();
-        return fileName != null && fileName.contains(".") ? fileName.substring(fileName.lastIndexOf(".") + 1) : "";
+        return fileName != null && fileName.contains(".") ? fileName.substring(fileName.lastIndexOf(".") + 1) : "png";
     }
 
     @Transactional
@@ -58,7 +61,7 @@ public class ItemService {
 
         itemRepository.save(item);
 
-        String imageUrl = "/static/default.png"; // 추후 수정 필요
+        String imageUrl = "/items/default.png"; // 추후 수정 필요
         if (requestForm.getItemImage() != null && !requestForm.getItemImage().isEmpty()) {
             imageUrl = saveImage(requestForm.getItemImage(), item.getItemId());
         }
