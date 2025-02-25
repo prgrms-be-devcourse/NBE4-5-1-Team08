@@ -1,6 +1,7 @@
 package com.java.NBE4_5_1_8.global.init;
 
 import com.java.NBE4_5_1_8.domain.item.dto.ItemForm;
+import com.java.NBE4_5_1_8.domain.item.service.CategoryService;
 import com.java.NBE4_5_1_8.domain.item.service.ItemService;
 import com.java.NBE4_5_1_8.domain.orderinfo.service.OrderInfoService;
 import lombok.RequiredArgsConstructor;
@@ -22,7 +23,7 @@ public class BaseInitData {
     private final ItemService itemService;
     private final OrderInfoService orderInfoService;
     private static final Random RANDOM = new Random();
-
+    private final CategoryService categoryService;
 
     @Autowired
     @Lazy
@@ -46,6 +47,7 @@ public class BaseInitData {
         itemService.createItem(new ItemForm("Columbia Nariñó", "커피콩", "고소한 풍미의 콜롬비아 원두", 200, 5000, null));
         itemService.createItem(new ItemForm("Brazil Serra Do Caparaó", "에스프레소", "밸런스 좋은 브라질 원두", 200, 5000, null));
         itemService.createItem(new ItemForm("Ethiopia Yirgacheffe", "드립커피", "산미가 조화로운 콜롬비아 원두", 200, 5000, null));
+        itemService.createItem(new ItemForm("Hawaii Kona", "스페셜티", "부드럽고 고급스러운 하와이 코나 원두", 120, 7000, null));
 
         // createOrderInfo 에서 orderInfo.setOrderItems(orderItems); 을 주석처리 하고 주석해제해서 만들 것 그리고 다시 주석해줘야함
 //        IntStream.range(0, 100).forEach(i -> {

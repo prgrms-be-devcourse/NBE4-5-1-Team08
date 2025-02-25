@@ -43,7 +43,7 @@ public class ApiV1OrderInfoController {
     }
 
     @PutMapping("/{orderId}")
-    public RsData<OrderInfo> updateOrderInfo(@PathVariable Long orderId, @RequestBody @Valid UpdateReqBody updateReqBody) {
+        public RsData<OrderInfo> updateOrderInfo(@PathVariable Long orderId, @RequestBody @Valid UpdateReqBody updateReqBody) {
         OrderInfo orderInfo = orderInfoService.getOrderInfoById(orderId);
         orderInfoService.updateOrderInfo(
                 orderInfo,
