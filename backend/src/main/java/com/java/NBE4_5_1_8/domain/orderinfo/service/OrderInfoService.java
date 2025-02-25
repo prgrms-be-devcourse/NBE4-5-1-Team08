@@ -27,7 +27,7 @@ public class OrderInfoService {
     private final OrderItemRepository orderItemRepository;
 
     @Transactional
-    public Long createOrderInfo(OrderForm orderForm) {
+    public OrderInfo createOrderInfo(OrderForm orderForm) {
         OrderInfo orderInfo = new OrderInfo(orderForm);
 
         List<OrderItem> orderItems = orderForm.getItemList().stream()
@@ -44,7 +44,7 @@ public class OrderInfoService {
         orderInfo.setOrderItems(orderItems);
         orderInfoRepository.save(orderInfo);
 
-        return orderInfo.getOrderId();
+        return orderInfo;
     }
 
     public OrderInfo getOrderById(Long id) {

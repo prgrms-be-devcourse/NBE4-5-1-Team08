@@ -24,7 +24,7 @@ public class ApiV1OrderInfoController {
 
     @PostMapping
     public RsData<Long> createOrder(@RequestBody OrderForm orderForm) {
-        Long orderItemId = orderInfoService.createOrderInfo(orderForm);
+        Long orderItemId = orderInfoService.createOrderInfo(orderForm).getOrderId();
         return RsData.success(
                 HttpStatus.CREATED, orderItemId,
                 SuccessMessage.ORDER_CREATED);
