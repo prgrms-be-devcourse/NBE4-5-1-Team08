@@ -13,15 +13,14 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { client } from "@/app/api/client";
+
+const API_BASE_URL = "http://localhost:8080/api";
 
 type ItemFormProps = {
   isEditMode: boolean;
   itemId?: number;
-  setSelectedTab?: (tab: "items") => void; // ✅ 등록 후 리스트로 이동을 위해 추가
+  setSelectedTab?: (tab: "items") => void;
 };
-
-const API_BASE_URL = "http://localhost:8080/api";
 
 const ItemForm = ({ isEditMode, itemId, setSelectedTab }: ItemFormProps) => {
   const router = useRouter();
@@ -33,7 +32,33 @@ const ItemForm = ({ isEditMode, itemId, setSelectedTab }: ItemFormProps) => {
     stockQuantity: 0,
   });
   const [itemImage, setItemImage] = useState<File | null>(null);
+  const [categories, setCategories] = useState<
+    { categoryId: number; categoryName: string }[]
+  >([]);
   const [loading, setLoading] = useState<boolean>(false);
+
+  // ✅ 카테고리 목록 가져오기
+  useEffect(() => {
+    const fetchCategories = async () => {
+      try {
+        const response = await fetch(`${API_BASE_URL}/v1/categories`);
+        if (!response.ok) {
+          throw new Error(`서버 응답 오류: ${response.status}`);
+        }
+
+        const rsData = await response.json();
+        console.log("📌 카테고리 데이터:", rsData.data);
+
+        if (rsData?.success) {
+          setCategories(rsData.data || []);
+        }
+      } catch (error) {
+        console.error("❌ 카테고리 데이터를 불러오는 중 오류 발생:", error);
+      }
+    };
+
+    fetchCategories();
+  }, []);
 
   // ✅ 상품 데이터 불러오기 (수정 모드일 경우)
   useEffect(() => {
@@ -41,9 +66,7 @@ const ItemForm = ({ isEditMode, itemId, setSelectedTab }: ItemFormProps) => {
       const fetchItem = async () => {
         try {
           setLoading(true);
-
           const response = await fetch(`${API_BASE_URL}/v1/items/${itemId}`);
-
           if (!response.ok) {
             throw new Error(`서버 응답 오류: ${response.status}`);
           }
@@ -72,7 +95,9 @@ const ItemForm = ({ isEditMode, itemId, setSelectedTab }: ItemFormProps) => {
   }, [isEditMode, itemId]);
 
   const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+    e: React.ChangeEvent<
+      HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
+    >
   ) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
@@ -80,6 +105,29 @@ const ItemForm = ({ isEditMode, itemId, setSelectedTab }: ItemFormProps) => {
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files.length > 0) {
       setItemImage(e.target.files[0]);
+    }
+  };
+
+  const handleDelete = async () => {
+    if (!itemId) return;
+
+    const confirmDelete = window.confirm("정말로 이 상품을 삭제하시겠습니까?");
+    if (!confirmDelete) return;
+
+    try {
+      const response = await fetch(`${API_BASE_URL}/v1/items/${itemId}`, {
+        method: "DELETE",
+      });
+
+      if (!response.ok) {
+        throw new Error(`서버 응답 오류: ${response.status}`);
+      }
+
+      console.log("✅ 상품 삭제 성공!");
+      setSelectedTab?.("items"); // ✅ 삭제 후 상품 목록으로 이동
+      router.refresh();
+    } catch (error) {
+      console.error("❌ 상품 삭제 중 오류 발생:", error);
     }
   };
 
@@ -116,37 +164,13 @@ const ItemForm = ({ isEditMode, itemId, setSelectedTab }: ItemFormProps) => {
       }
 
       console.log(`✅ 상품 ${isEditMode ? "수정" : "등록"} 성공!`);
-      setSelectedTab?.("items"); // ✅ 완료 후 상품 목록으로 이동
+      setSelectedTab?.("items");
       router.refresh();
     } catch (error) {
       console.error(
         `❌ 상품 ${isEditMode ? "수정" : "등록"} 중 오류 발생:`,
         error
       );
-    }
-  };
-
-  // ✅ 상품 삭제 함수 추가
-  const handleDelete = async () => {
-    if (!itemId) return;
-
-    const confirmDelete = window.confirm("정말로 이 상품을 삭제하시겠습니까?");
-    if (!confirmDelete) return;
-
-    try {
-      const response = await fetch(`${API_BASE_URL}/v1/items/${itemId}`, {
-        method: "DELETE",
-      });
-
-      if (!response.ok) {
-        throw new Error(`서버 응답 오류: ${response.status}`);
-      }
-
-      console.log("✅ 상품 삭제 성공!");
-      setSelectedTab?.("items"); // ✅ 삭제 후 상품 목록으로 이동
-      router.refresh();
-    } catch (error) {
-      console.error("❌ 상품 삭제 중 오류 발생:", error);
     }
   };
 
@@ -171,6 +195,7 @@ const ItemForm = ({ isEditMode, itemId, setSelectedTab }: ItemFormProps) => {
                     onChange={handleChange}
                     required
                   />
+
                   <Label htmlFor="itemImage">상품 이미지</Label>
                   <Input
                     id="itemImage"
@@ -179,14 +204,27 @@ const ItemForm = ({ isEditMode, itemId, setSelectedTab }: ItemFormProps) => {
                     accept="image/*"
                     onChange={handleImageChange}
                   />
+
                   <Label htmlFor="category">카테고리</Label>
-                  <Input
+                  <select
                     id="category"
                     name="category"
                     value={formData.category}
                     onChange={handleChange}
+                    className="border rounded p-2 bg-gray-800 text-white"
                     required
-                  />
+                  >
+                    <option value="">카테고리 선택</option>
+                    {categories.map((category) => (
+                      <option
+                        key={category.categoryId}
+                        value={category.categoryName}
+                      >
+                        {category.categoryName}
+                      </option>
+                    ))}
+                  </select>
+
                   <Label htmlFor="description">상품 설명</Label>
                   <Textarea
                     id="description"
@@ -194,6 +232,7 @@ const ItemForm = ({ isEditMode, itemId, setSelectedTab }: ItemFormProps) => {
                     value={formData.description}
                     onChange={handleChange}
                   />
+
                   <Label htmlFor="price">가격</Label>
                   <Input
                     id="price"
@@ -203,6 +242,7 @@ const ItemForm = ({ isEditMode, itemId, setSelectedTab }: ItemFormProps) => {
                     onChange={handleChange}
                     required
                   />
+
                   <Label htmlFor="stockQuantity">재고 수량</Label>
                   <Input
                     id="stockQuantity"
