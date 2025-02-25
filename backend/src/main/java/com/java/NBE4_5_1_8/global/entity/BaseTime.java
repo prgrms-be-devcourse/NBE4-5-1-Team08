@@ -19,7 +19,7 @@ import java.time.LocalDateTime;
 @EntityListeners(AuditingEntityListener.class)
 public class BaseTime {
     @CreatedDate
-    @Setter(AccessLevel.PRIVATE)
+    @Setter(AccessLevel.PUBLIC)
     @JsonProperty("createdAt")
     private LocalDateTime createdDate;
 

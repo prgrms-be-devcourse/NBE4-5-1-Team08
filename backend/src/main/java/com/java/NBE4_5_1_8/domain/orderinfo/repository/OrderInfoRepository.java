@@ -11,6 +11,7 @@ import java.util.List;
 @Repository
 public interface OrderInfoRepository extends JpaRepository<OrderInfo, Long> {
     OrderInfo findByOrderIdAndMemberPassword(Long orderId, String password);
+    List<OrderInfo> findByOrderStatusAndCreatedDateBetween(OrderStatus orderStatus, LocalDateTime start, LocalDateTime end);
 
     List<OrderInfo> findAllByOrderStatus(OrderStatus orderStatus);
 

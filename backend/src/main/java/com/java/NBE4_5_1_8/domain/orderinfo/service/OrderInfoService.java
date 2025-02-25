@@ -31,7 +31,7 @@ public class OrderInfoService {
     private final EmailService emailService;
 
     @Transactional
-    public Long createOrderInfo(OrderForm orderForm) {
+    public OrderInfo createOrderInfo(OrderForm orderForm) {
         OrderInfo orderInfo = new OrderInfo(orderForm);
 
         List<OrderItem> orderItems = orderForm.getItemList().stream()
@@ -49,8 +49,7 @@ public class OrderInfoService {
         orderInfoRepository.save(orderInfo);
 
         emailService.sendOrderConfirmation(orderForm.getMemberEmail(), orderInfo.getOrderId(), orderItems);
-
-        return orderInfo.getOrderId();
+        return orderInfo;
     }
 
     public OrderInfo getOrderById(Long id) {
