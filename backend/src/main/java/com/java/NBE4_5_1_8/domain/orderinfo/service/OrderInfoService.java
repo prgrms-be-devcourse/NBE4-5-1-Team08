@@ -4,11 +4,12 @@ import com.java.NBE4_5_1_8.domain.email.service.EmailService;
 import com.java.NBE4_5_1_8.domain.item.entity.Item;
 import com.java.NBE4_5_1_8.domain.item.repository.ItemRepository;
 import com.java.NBE4_5_1_8.domain.orderinfo.dto.OrderForm;
+import com.java.NBE4_5_1_8.domain.orderinfo.dto.OrderInfoDto;
 import com.java.NBE4_5_1_8.domain.orderinfo.entity.OrderInfo;
+import com.java.NBE4_5_1_8.domain.orderinfo.entity.OrderItem;
 import com.java.NBE4_5_1_8.domain.orderinfo.entity.OrderStatus;
 import com.java.NBE4_5_1_8.domain.orderinfo.repository.OrderInfoRepository;
-import com.java.NBE4_5_1_8.domain.orderitem.entity.OrderItem;
-import com.java.NBE4_5_1_8.domain.orderitem.repository.OrderItemRepository;
+import com.java.NBE4_5_1_8.domain.orderinfo.repository.OrderItemRepository;
 import com.java.NBE4_5_1_8.global.exception.ServiceException;
 import com.java.NBE4_5_1_8.global.message.ErrorMessage;
 import jakarta.validation.constraints.NotNull;
@@ -40,7 +41,7 @@ public class OrderInfoService {
                             .orElseThrow(() -> new ServiceException(HttpStatus.BAD_REQUEST, ErrorMessage.ITEM_NOT_FOUND));
 
                     item.setStockQuantity(item.getStockQuantity() - dto.getQuantity());
-                    OrderItem orderItem = OrderItem.createOrderItem(item, orderInfo, dto.getQuantity());
+                    OrderItem orderItem = new OrderItem(item, orderInfo, dto.getQuantity());
                     orderItem.setOrderPrice(item.getPrice() * dto.getQuantity());
                     return orderItem;
                 })
@@ -53,14 +54,13 @@ public class OrderInfoService {
         return orderInfo;
     }
 
-    public OrderInfo getOrderById(Long id) {
+    public OrderInfo getOrderInfoById(Long id) {
         return orderInfoRepository.findById(id)
                 .orElseThrow(() -> new ServiceException(HttpStatus.BAD_REQUEST, ErrorMessage.ORDER_NOT_FOUND));
     }
 
-    public Long getOrderItemList(Long orderId, String memberPassword) {
-        OrderInfo orderInfo = orderInfoRepository.findByOrderIdAndMemberPassword(orderId, memberPassword);
-        return orderInfo.getOrderId();
+    public OrderInfoDto getOrderInfoByIdAndMemberPassword(Long orderId, String memberPassword) {
+        return orderInfoRepository.findByOrderIdAndMemberPassword(orderId, memberPassword);
     }
 
     @Transactional
@@ -71,19 +71,8 @@ public class OrderInfoService {
     }
 
     @Transactional
-    public void deleteOrderInfo(Long orderId) {
-        OrderInfo orderInfo = getOrderById(orderId);
-
-        if (!orderInfo.getOrderStatus().equals(OrderStatus.ORDERED)) {
-            throw new ServiceException(HttpStatus.BAD_REQUEST, ErrorMessage.ITEM_CANNOT_BE_DELETED);
-        }
-
-        orderInfoRepository.delete(orderInfo);
-    }
-
-    @Transactional
-    public void cancelOrder(Long orderId) {
-        OrderInfo orderInfo = getOrderById(orderId);
+    public void cancelOrderInfo(Long orderId) {
+        OrderInfo orderInfo = getOrderInfoById(orderId);
 
         if (!orderInfo.getOrderStatus().equals(OrderStatus.ORDERED)) {
             throw new ServiceException(HttpStatus.BAD_REQUEST, ErrorMessage.ORDER_CANNOT_BE_DELETED);

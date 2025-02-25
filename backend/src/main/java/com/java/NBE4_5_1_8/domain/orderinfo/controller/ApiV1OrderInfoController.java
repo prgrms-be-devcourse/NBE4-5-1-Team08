@@ -1,10 +1,11 @@
 package com.java.NBE4_5_1_8.domain.orderinfo.controller;
 
 import com.java.NBE4_5_1_8.domain.orderinfo.dto.OrderForm;
+import com.java.NBE4_5_1_8.domain.orderinfo.dto.OrderInfoDto;
 import com.java.NBE4_5_1_8.domain.orderinfo.entity.OrderInfo;
+import com.java.NBE4_5_1_8.domain.orderinfo.entity.OrderItem;
 import com.java.NBE4_5_1_8.domain.orderinfo.entity.OrderStatus;
 import com.java.NBE4_5_1_8.domain.orderinfo.service.OrderInfoService;
-import com.java.NBE4_5_1_8.domain.orderitem.entity.OrderItem;
 import com.java.NBE4_5_1_8.global.message.SuccessMessage;
 import com.java.NBE4_5_1_8.global.response.RsData;
 import jakarta.validation.Valid;
@@ -31,19 +32,19 @@ public class ApiV1OrderInfoController {
     }
 
     @GetMapping("{orderId}")
-    public RsData<Long> getOrderItemList(
+    public RsData<OrderInfoDto> getOrderItemList(
             @RequestHeader("memberPassword") String memberPassword,
             @PathVariable("orderId") Long orderId) {
 
-        Long orderItemId = orderInfoService.getOrderItemList(orderId, memberPassword);
+        OrderInfoDto OrderInfoDto = orderInfoService.getOrderInfoByIdAndMemberPassword(orderId, memberPassword);
         return RsData.success(
-                HttpStatus.OK, orderItemId,
+                HttpStatus.OK, OrderInfoDto,
                 SuccessMessage.ORDER_LIST_FETCHED);
     }
 
     @PutMapping("/{orderId}")
     public RsData<OrderInfo> updateOrderInfo(@PathVariable Long orderId, @RequestBody @Valid UpdateReqBody updateReqBody) {
-        OrderInfo orderInfo = orderInfoService.getOrderById(orderId);
+        OrderInfo orderInfo = orderInfoService.getOrderInfoById(orderId);
         orderInfoService.updateOrderInfo(
                 orderInfo,
                 updateReqBody.orderStatus(),
@@ -62,18 +63,7 @@ public class ApiV1OrderInfoController {
 
     @DeleteMapping("/{orderId}")
     public RsData<Void> deleteOrderInfo(@PathVariable Long orderId) {
-//        orderInfoService.deleteOrderInfo(orderId);
-//        return RsData.success(
-//                HttpStatus.OK,
-//                "%d번 주문이 삭제되었습니다.".formatted(orderId));
-        return cancelOrder(orderId);
-    }
-
-    @PostMapping("/{orderId}/cancel")
-    public RsData<Void> cancelOrder(
-            @PathVariable Long orderId
-    ) {
-        orderInfoService.cancelOrder(orderId);
+        orderInfoService.cancelOrderInfo(orderId);
         return RsData.success(
                 HttpStatus.OK,
                 SuccessMessage.ORDER_DELETED);
