@@ -5,6 +5,7 @@ import com.java.NBE4_5_1_8.domain.item.entity.Category;
 import com.java.NBE4_5_1_8.domain.item.entity.Item;
 import com.java.NBE4_5_1_8.domain.item.repository.CategoryRepository;
 import com.java.NBE4_5_1_8.domain.item.repository.ItemRepository;
+import com.java.NBE4_5_1_8.domain.orderitem.repository.OrderItemRepository;
 import com.java.NBE4_5_1_8.global.exception.ServiceException;
 import com.java.NBE4_5_1_8.global.message.ErrorMessage;
 import lombok.RequiredArgsConstructor;
@@ -26,6 +27,7 @@ import java.util.List;
 public class ItemService {
     private final ItemRepository itemRepository;
     private final CategoryRepository categoryRepository;
+    private final OrderItemRepository orderItemRepository;
 
     @Value("${file.upload-dir}")
     private String itemsDir;
@@ -110,6 +112,12 @@ public class ItemService {
     }
 
     public void deleteItem(Item item) {
+
+        boolean hasOrderHistory = orderItemRepository.existsByItem(item);
+        if (hasOrderHistory) {
+            throw new ServiceException(HttpStatus.BAD_REQUEST, ErrorMessage.ITEM_CANNOT_BE_DELETED);
+        }
+
         itemRepository.delete(item);
     }
 
