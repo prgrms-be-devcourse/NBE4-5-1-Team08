@@ -102,4 +102,8 @@ public class ItemService {
     public void deleteItem(Item item) {
         itemRepository.delete(item);
     }
+
+    public List<Item> findAll() {
+        return itemRepository.findAll();
+    }
 }
