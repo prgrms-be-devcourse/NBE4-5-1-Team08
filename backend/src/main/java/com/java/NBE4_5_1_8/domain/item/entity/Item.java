@@ -25,4 +25,7 @@ public class Item extends BaseTime {
 
     @OneToMany(mappedBy = "item")
     private List<OrderItem> orderItems;
+
+    @Column(nullable = false)
+    private boolean deleted = false;
 }

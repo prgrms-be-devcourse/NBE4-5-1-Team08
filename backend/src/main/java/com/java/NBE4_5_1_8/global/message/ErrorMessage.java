@@ -12,7 +12,8 @@ public enum ErrorMessage implements MessageType{
     ITEM_CANNOT_BE_DELETED("주문된 상품은 삭제할 수 없습니다."),
     ORDER_CANNOT_BE_DELETED("삭제 불가능한 주문입니다."),
     CATEGORY_NOT_FOUND("존재하지 않는 카테고리입니다."),
-    CATEGORY_ALREADY_EXISTS("이미 존재하는 카테고리입니다.");
+    CATEGORY_ALREADY_EXISTS("이미 존재하는 카테고리입니다."),
+    ITEM_BE_DISABLED("주문 내역이 있는 상품은 비활성화 처리되었습니다.");
 
 
     private final String message;

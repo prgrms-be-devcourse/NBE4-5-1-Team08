@@ -72,6 +72,6 @@ public class ApiV1ItemController {
 
         return RsData.success(
                 HttpStatus.OK,
-                SuccessMessage.ITEM_UPDATED);
+                SuccessMessage.ITEM_DELETED);
     }
 }
