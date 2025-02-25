@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>주문 완료 안내</title>
+</head>
+<body style="font-family: Arial, sans-serif; margin: 0; padding: 0; background-color: #f4f4f4;">
+<table style="width: 50%; background-color: #ffffff; padding: 20px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);">
+    <tr>
+        <td>
+            <h2 style="text-align: center; color: #333;">주문이 완료되었습니다!</h2>
+            <p style="font-size: 16px; color: #333;">주문번호: <strong>{{orderId}}</strong></p>
+            <h3 style="font-size: 18px; color: #333;">주문 내역:</h3>
+            <table style="width: 100%; border-collapse: collapse; margin-top: 10px;">
+                <thead>
+                <tr style="background-color: #f2f2f2; text-align: center;">
+                    <th style="padding: 10px; border: 1px solid #ddd;">상품명</th>
+                    <th style="padding: 10px; border: 1px solid #ddd;">수량</th>
+                    <th style="padding: 10px; border: 1px solid #ddd;">가격</th>
+                </tr>
+                </thead>
+                <tbody>
+                {{orderItems}}
+                </tbody>
+            </table>
+        </td>
+    </tr>
+</table>
+</body>
+</html>
