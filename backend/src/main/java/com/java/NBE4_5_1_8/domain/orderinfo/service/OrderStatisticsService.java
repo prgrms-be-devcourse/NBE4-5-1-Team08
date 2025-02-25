@@ -8,7 +8,6 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.*;
-import java.util.stream.Collectors;
 
 @Service
 public class OrderStatisticsService {
@@ -18,66 +17,56 @@ public class OrderStatisticsService {
         this.orderInfoRepository = orderInfoRepository;
     }
 
-    public Map<String, Object> getHourlySales(LocalDate date) {
+
+    public List<Map.Entry<Integer, Integer>> getHourlySales(LocalDate date) {
         LocalDateTime startOfDay = date.atStartOfDay();
         LocalDateTime endOfDay = date.plusDays(1).atStartOfDay();
 
-        List<OrderInfo> orderList = orderInfoRepository.findByOrderStatusAndCreatedDateBetween(
+        List<OrderInfo> orders = orderInfoRepository.findByOrderStatusAndCreatedDateBetween(
                 OrderStatus.DELIVERED, startOfDay, endOfDay
         );
 
-        // 24시간 배열 초기화
-        Map<Integer, Double> hourlySales = new HashMap<>();
+        // 24시간 초기화 (매출 없는 시간대도 0으로 반환)
+        Map<Integer, Integer> hourlySales = new HashMap<>();
         for (int i = 0; i < 24; i++) {
-            hourlySales.put(i, 0.0);
+            hourlySales.put(i, 0);
         }
 
-        // 각 주문의 시간별 매출 합산
-        for (OrderInfo order : orderList) {
+        // 시간별 매출 합산
+        for (OrderInfo order : orders) {
             int hour = order.getCreatedDate().getHour();
-            double orderTotal = order.getOrderItems().stream()
-                    .mapToDouble(item -> item.getOrderPrice() * item.getQuantity())
+            int orderTotal = order.getOrderItems().stream()
+                    .mapToInt(item -> item.getOrderPrice() * item.getQuantity())
                     .sum();
             hourlySales.put(hour, hourlySales.get(hour) + orderTotal);
         }
 
-        // 결과 데이터 구성
-        List<String> labels = hourlySales.keySet().stream()
-                .sorted()
-                .map(hour -> String.format("%02d:00", hour))
-                .collect(Collectors.toList());
-
-        List<Double> data = new ArrayList<>(hourlySales.values());
-
-        return Map.of("labels", labels, "data", data);
+        // JSON 형식으로 변환
+        return hourlySales.entrySet().stream().toList();
     }
 
-    public Map<String, Object> getDailySales(LocalDate startDate, LocalDate endDate) {
+
+    public List<Map.Entry<LocalDate, Integer>> getDailySales(LocalDate startDate, LocalDate endDate) {
         List<OrderInfo> orders = orderInfoRepository.findByOrderStatusAndCreatedDateBetween(
                 OrderStatus.DELIVERED, startDate.atStartOfDay(), endDate.plusDays(1).atStartOfDay()
         );
 
-        // 날짜별 매출 합산
-        Map<LocalDate, Double> dailySales = new TreeMap<>();
+        // 날짜별 매출 초기화 (매출 없는 날짜도 0으로 반환)
+        Map<LocalDate, Integer> dailySales = new TreeMap<>();
         for (LocalDate date = startDate; !date.isAfter(endDate); date = date.plusDays(1)) {
-            dailySales.put(date, 0.0);
+            dailySales.put(date, 0);
         }
 
+        // 일별 매출 합산
         for (OrderInfo order : orders) {
             LocalDate orderDate = order.getCreatedDate().toLocalDate();
-            double orderTotal = order.getOrderItems().stream()
-                    .mapToDouble(item -> item.getOrderPrice() * item.getQuantity())
+            int orderTotal = order.getOrderItems().stream()
+                    .mapToInt(item -> item.getOrderPrice() * item.getQuantity())
                     .sum();
-            dailySales.put(orderDate, dailySales.getOrDefault(orderDate, 0.0) + orderTotal);
+            dailySales.put(orderDate, dailySales.get(orderDate) + orderTotal);
         }
 
-        // 결과 데이터 구성
-        List<String> labels = dailySales.keySet().stream()
-                .map(LocalDate::toString)
-                .collect(Collectors.toList());
-
-        List<Double> data = new ArrayList<>(dailySales.values());
-
-        return Map.of("labels", labels, "data", data);
+        // JSON 형식으로 변환
+        return dailySales.entrySet().stream().toList();
     }
 }

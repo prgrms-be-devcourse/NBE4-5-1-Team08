@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.time.LocalDate;
+import java.util.List;
 import java.util.Map;
 
 @RestController
@@ -20,21 +21,21 @@ public class ApiV1OrderStatisticsController {
     private final OrderStatisticsService orderStatisticsService;
 
     @GetMapping("/hourly")
-    public RsData<Map<String, Object>> getHourlySales(
+    public RsData<List<Map.Entry<Integer, Integer>>> getHourlySales(
             @RequestParam(required = false) String date
     ) {
         LocalDate queryDate = (date == null) ? LocalDate.now() : LocalDate.parse(date);
-        Map<String, Object> hourlySales = orderStatisticsService.getHourlySales(queryDate);
+        List<Map.Entry<Integer, Integer>> hourlySales = orderStatisticsService.getHourlySales(queryDate);
 
         return RsData.success(HttpStatus.OK, hourlySales, SuccessMessage.ORDER_CREATED);
     }
 
     @GetMapping("/daily")
-    public RsData<Map<String, Object>> getDailySales(
+    public RsData<List<Map.Entry<LocalDate, Integer>>> getDailySales(
             @RequestParam String startDate,
             @RequestParam String endDate
     ) {
-        Map<String, Object> dailySales = orderStatisticsService.getDailySales(
+        List<Map.Entry<LocalDate, Integer>> dailySales = orderStatisticsService.getDailySales(
                 LocalDate.parse(startDate),
                 LocalDate.parse(endDate)
         );
