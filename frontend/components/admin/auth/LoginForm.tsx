@@ -31,21 +31,27 @@ const LoginForm = () => {
     setErrorMessage("");
 
     try {
-      const response = await fetch("/api/login", {
+      const response = await fetch("/api/admin/login", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(formData),
+        credentials: "include",
       });
 
       const data = await response.json();
 
+      if (!response.ok) {
+        setErrorMessage(data.message || "아이디 또는 비밀번호가 틀렸습니다.");
+        return;
+      }
+
       if (data.success) {
         router.push("/admin/items");
-      } else {
-        setErrorMessage("아이디 또는 비밀번호가 틀렸습니다.");
+        router.refresh();
       }
     } catch (error) {
-      setErrorMessage("로그인 중 오류가 발생했습니다.");
+      console.error("로그인 오류:", error);
+      setErrorMessage("서버와 연결할 수 없습니다. 나중에 다시 시도해주세요.");
     }
   };
 
