@@ -19,18 +19,19 @@ type ItemType = {
   description: string;
   stockQuantity: number;
   price: number;
+  imageUrl: string;
 };
 
 type ContentProps = {
   selectedTab: "items" | "sales" | "editItem";
   setSelectedTab: (tab: "items" | "sales" | "editItem") => void;
-  setSelectedItemId: (itemId: number) => void; // 📌 추가 (선택된 상품 ID 저장)
+  setEditItemId: React.Dispatch<React.SetStateAction<number | null>>;
 };
 
 const Content = ({
   selectedTab,
   setSelectedTab,
-  setSelectedItemId,
+  setEditItemId,
 }: ContentProps) => {
   const [items, setItems] = useState<ItemType[]>([]);
 
@@ -89,7 +90,7 @@ const Content = ({
                     <Button
                       className="bg-green-500"
                       onClick={() => {
-                        setSelectedItemId(item.itemId); // 📌 선택된 상품 ID 저장
+                        setEditItemId(item.itemId); // 📌 선택된 상품 ID 저장
                         setSelectedTab("editItem"); // 📌 "상품 수정" 화면으로 변경
                       }}
                     >
