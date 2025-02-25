@@ -44,8 +44,8 @@ public class BaseInitData {
 
         // 샘플 아이템 데이터 생성
         itemService.createItem(new ItemForm("Columbia Nariñó", "커피콩", "고소한 풍미의 콜롬비아 원두", 200, 5000, null));
-        itemService.createItem(new ItemForm("Brazil Serra Do Caparaó", "커피콩", "밸런스 좋은 브라질 원두", 200, 5000, null));
-        itemService.createItem(new ItemForm("Columbia Nariñó", "커피콩", "산미가 조화로운 콜롬비아 원두", 200, 5000, null));
+        itemService.createItem(new ItemForm("Brazil Serra Do Caparaó", "에스프레소", "밸런스 좋은 브라질 원두", 200, 5000, null));
+        itemService.createItem(new ItemForm("Ethiopia Yirgacheffe", "드립커피", "산미가 조화로운 콜롬비아 원두", 200, 5000, null));
 
         // createOrderInfo 에서 orderInfo.setOrderItems(orderItems); 을 주석처리 하고 주석해제해서 만들 것 그리고 다시 주석해줘야함
 //        IntStream.range(0, 100).forEach(i -> {
