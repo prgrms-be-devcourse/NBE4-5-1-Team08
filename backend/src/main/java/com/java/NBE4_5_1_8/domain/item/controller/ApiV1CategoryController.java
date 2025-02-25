@@ -1,5 +1,6 @@
 package com.java.NBE4_5_1_8.domain.item.controller;
 
+import com.java.NBE4_5_1_8.domain.item.dto.CategoryDto;
 import com.java.NBE4_5_1_8.domain.item.dto.CategoryForm;
 import com.java.NBE4_5_1_8.domain.item.entity.Category;
 import com.java.NBE4_5_1_8.domain.item.service.CategoryService;
@@ -18,20 +19,25 @@ public class ApiV1CategoryController {
     private final CategoryService categoryService;
 
     @PostMapping
-    public RsData<Category> createCategory(@RequestBody CategoryForm requestForm) {
+    public RsData<CategoryDto> createCategory(@RequestBody CategoryForm requestForm) {
         Category category = categoryService.createCategory(requestForm.getCategoryName());
 
         return RsData.success(
                 HttpStatus.OK,
-                category,
+                new CategoryDto(category),
                 SuccessMessage.CATEGORY_CREATED);
     }
 
     @GetMapping
-    public RsData<List<Category>> getCategoryList() {
+    public RsData<List<CategoryDto>> getCategoryList() {
+
+        List<Category> Categories = categoryService.getAllCategories();
+
         return RsData.success(
                 HttpStatus.OK,
-                categoryService.getAllCategories(),
+                Categories.stream()
+                        .map(CategoryDto::new)
+                        .toList(),
                 SuccessMessage.CATEGORY_LIST_FETCHED);
     }
 }
