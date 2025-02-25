@@ -8,6 +8,10 @@ import {components} from "@/lib/api/schema";
 import {Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger} from "@/components/ui/sheet";
 import {Input} from "@/components/ui/input";
 import Link from "next/link";
+import { CartItem } from "@/type/types";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faCartPlus, faCartShopping } from "@fortawesome/free-solid-svg-icons";
+
 import {CartItem} from "@/type/types";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faCartPlus, faCartShopping} from "@fortawesome/free-solid-svg-icons";
@@ -23,6 +27,12 @@ import {
 import Image from "next/image";
 
 type ItemDto = components["schemas"]["ItemDto"];
+const HomeClientPage = ({ itemList }: { itemList: ItemDto[] }) => {
+  const [selectedItem, setSelectedItem] = useState<ItemDto | null>(null);
+  const [quantity, setQuantity] = useState<number>(1);
+  const [openDialog, setOpenDialog] = useState<boolean>(false);
+  const [openSheet, setOpenSheet] = useState<boolean>(false);
+  const [cartItemList, setCartItemList] = useState<CartItem[]>([]);
 
 const HomeClientPage = ({itemList, categoryList}: {
     itemList: ItemDto[];
@@ -36,10 +46,16 @@ const HomeClientPage = ({itemList, categoryList}: {
     const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
     const [filteredItemList, setFilteredItemList] = useState<ItemDto[]>(itemList);
 
-    const getCart = useCallback(() => {
-        return JSON.parse(localStorage.getItem("cart") || "[]") as CartItem[];
-    }, []);
+  const getCart = useCallback(() => {
+    return JSON.parse(localStorage.getItem("cart") || "[]") as CartItem[];
+  }, []);
 
+  const addToCart = (product: CartItem): void => {
+    if (quantity < 1) {
+      alert("1개 이상 주문해야합니다.");
+      return;
+    }
+    const cart: CartItem[] = JSON.parse(localStorage.getItem("cart") || "[]");
     const addToCart = (product: CartItem): void => {
         if (quantity < 1) {
             alert("1개 이상 주문해야 합니다.");

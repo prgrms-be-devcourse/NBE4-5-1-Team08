@@ -40,6 +40,13 @@ public class OrderInfoService {
                     Item item = itemRepository.findById(dto.getItemId())
                             .orElseThrow(() -> new ServiceException(HttpStatus.BAD_REQUEST, ErrorMessage.ITEM_NOT_FOUND));
 
+                    if (item.getStockQuantity() - dto.getQuantity() < 0) {
+                        throw new ServiceException(
+                                HttpStatus.BAD_REQUEST,
+                                ErrorMessage.OUT_OF_STUCK
+                        );
+                    }
+
                     item.setStockQuantity(item.getStockQuantity() - dto.getQuantity());
                     OrderItem orderItem = new OrderItem(item, orderInfo, dto.getQuantity());
                     orderItem.setOrderPrice(item.getPrice() * dto.getQuantity());
