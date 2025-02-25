@@ -1,23 +1,25 @@
 "use client"
 
 import {Table, TableBody, TableCell, TableFooter, TableHead, TableHeader, TableRow} from "@/components/ui/table";
-import {Form, FormControl, FormField, FormItem, FormLabel, FormMessage} from "@/components/ui/form";
 import {Input} from "@/components/ui/input";
-import {Button} from "@/components/ui/button";
-import {useRouter} from "next/navigation";
 import {useForm} from "react-hook-form";
 import {zodResolver} from "@hookform/resolvers/zod";
 import {z} from "zod";
+import {components} from "@/lib/api/schema";
+import {Button} from "@/components/ui/button";
+import {MouseEventHandler} from "react";
+import {client} from "@/app/api/client";
+import {useRouter} from "next/navigation";
+
 
 const formSchema = z.object({
     email: z.string().email({message: "유효한 이메일을 입력하세요."}),
     address: z.string().min(5, {message: "주소는 최소 5자 이상 입력해야 합니다."})
 });
 
-type FormSchemaType = z.infer<typeof formSchema>;
 
-
-const ClientOrdersPage = () => {
+type OrderInfo = components["schemas"]["OrderInfoDto"];
+const ClientOrdersPage = ({orderInfo}: { orderInfo: OrderInfo }) => {
     const router = useRouter();
 
     const form = useForm({
@@ -29,16 +31,19 @@ const ClientOrdersPage = () => {
     });
 
 
-    const onSubmit = async (values: FormSchemaType) => {
-        if (!cartItems || cartItems.length === 0) {
-            alert("장바구니가 비어 있습니다.");
+    const handleCancelOrder: MouseEventHandler<HTMLButtonElement> | undefined = async () => {
+        try {
+            await client.DELETE("/v1/orders/{orderId}", {
+                headers: {
+                    memberPassword: "password0",
+                },
+            })
             router.push("/");
-            return;
+        } catch {
+            alert("서버 오류");
         }
+    };
 
-    }
-
-    if (!orderInfo) return (router.push("/login"));
     return (
         <div className="flex flex-col gap-2 w-1/2 mx-auto">
             <Table>
@@ -50,11 +55,11 @@ const ClientOrdersPage = () => {
                     </TableRow>
                 </TableHeader>
                 <TableBody>
-                    {cartItems.map((cartItem) => (
-                        <TableRow key={cartItem.itemId}>
-                            <TableCell className="font-medium">{cartItem.itemName}</TableCell>
-                            <TableCell className={"text-right"}>{cartItem.quantity}</TableCell>
-                            <TableCell className="text-right">{cartItem.quantity * cartItem.price}</TableCell>
+                    {orderInfo.orderItems!.map((orderItem) => (
+                        <TableRow key={orderItem.itemId}>
+                            <TableCell className="font-medium">{orderItem.itemName}</TableCell>
+                            <TableCell className={"text-right"}>{orderItem.quantity}</TableCell>
+                            <TableCell className="text-right">{orderItem.quantity! * orderItem.price}</TableCell>
                         </TableRow>
                     ))}
                 </TableBody>
@@ -62,7 +67,7 @@ const ClientOrdersPage = () => {
                     <TableRow>
                         <TableCell colSpan={2}>Total</TableCell>
                         <TableCell className="text-right">
-                            {cartItems.reduce((sum, item) => sum + item.quantity * item.price, 0)}
+                            {orderInfo.orderItems.reduce((sum, item) => sum + item.quantity * item.price, 0)}
                         </TableCell>
                     </TableRow>
                 </TableFooter>
@@ -70,35 +75,36 @@ const ClientOrdersPage = () => {
 
             <div className="mt-6 p-6 border rounded-lg shadow-md">
                 <h2 className="text-xl font-bold mb-4">배송 정보 입력</h2>
-                <Form {...form}>
-                    <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+                <Table>
+                    <TableHeader>
+                        <TableRow>
+                            <TableHead className="w-32">항목</TableHead>
+                            <TableHead>입력값</TableHead>
+                        </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                        <TableRow>
+                            <TableCell className="font-medium">이메일</TableCell>
+                            <TableCell>
+                                <Input type="email" value={form.getValues("email")} readOnly
+                                       className="border-none bg-transparent focus:ring-0"/>
+                            </TableCell>
+                        </TableRow>
 
-                        <FormField control={form.control} name="email" render={({field}) => (
-                            <FormItem className="flex items-center space-x-2">
-                                <FormLabel className="w-24">이메일</FormLabel>
-                                <FormControl>
-                                    <Input type="email" placeholder="이메일을 입력하세요" {...field} />
-                                </FormControl>
-                                <FormMessage/>
-                            </FormItem>
-                        )}/>
-
-                        <FormField control={form.control} name="address" render={({field}) => (
-                            <FormItem className="flex items-center space-x-2">
-                                <FormLabel className="w-24">주소</FormLabel>
-                                <FormControl>
-                                    <Input type="text" placeholder="배송지를 입력하세요" {...field} />
-                                </FormControl>
-                                <FormMessage/>
-                            </FormItem>
-                        )}/>
-
-                        <div className={"flex justify-center mt-5"}>
-                            <Button type="submit" className="w-1/2" variant={"destructive"}>주문 취소</Button>
-                            <Button type="submit" className="w-1/2">주문 수정</Button>
-                        </div>
-                    </form>
-                </Form>
+                        <TableRow>
+                            <TableCell className="font-medium">주소</TableCell>
+                            <TableCell>
+                                <Input type="text" value={form.getValues("address")} readOnly
+                                       className="border-none bg-transparent focus:ring-0"/>
+                            </TableCell>
+                        </TableRow>
+                    </TableBody>
+                </Table>
+                {orderInfo.orderStatus === "ORDERED" && <div className="flex justify-center mt-5">
+                    <Button type="button" className="w-1/2" variant="destructive" onClick={handleCancelOrder}>
+                        주문 취소
+                    </Button>
+                </div>}
             </div>
         </div>
     )
