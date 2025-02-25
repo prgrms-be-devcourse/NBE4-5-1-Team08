@@ -78,19 +78,7 @@ const ItemForm = ({ itemFormProps, isEditMode, itemId }: ItemFormProps) => {
 
     if (isEditMode) {
       await clientFormData.PUT("/v1/items/{itemId}", {
-        params: {
-          path: { itemId: itemId! },
-          query: {
-            requestForm: {
-              itemName: "",
-              category: "",
-              description: "",
-              stockQuantity: 0,
-              price: 0,
-              itemImage: undefined,
-            },
-          },
-        },
+        params: { path: { itemId: itemId! } },
         body: formDataToSend,
       });
     } else {
