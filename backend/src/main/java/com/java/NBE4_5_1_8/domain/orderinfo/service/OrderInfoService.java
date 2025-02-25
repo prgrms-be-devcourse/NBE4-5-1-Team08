@@ -1,5 +1,6 @@
 package com.java.NBE4_5_1_8.domain.orderinfo.service;
 
+import com.java.NBE4_5_1_8.domain.email.service.EmailService;
 import com.java.NBE4_5_1_8.domain.item.entity.Item;
 import com.java.NBE4_5_1_8.domain.item.repository.ItemRepository;
 import com.java.NBE4_5_1_8.domain.orderinfo.dto.OrderForm;
@@ -45,9 +46,7 @@ public class OrderInfoService {
         orderInfo.setOrderItems(orderItems);
         orderInfoRepository.save(orderInfo);
 
-        return orderInfo;
         emailService.sendOrderConfirmation(orderForm.getMemberEmail(), orderInfo.getOrderId(), orderItems);
-
         return orderInfo;
     }
 
