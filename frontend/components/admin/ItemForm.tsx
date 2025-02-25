@@ -42,16 +42,13 @@ const ItemForm = ({ isEditMode, itemId, setSelectedTab }: ItemFormProps) => {
         try {
           setLoading(true);
 
-          // ✅ 상품 데이터 요청 (fetch API 활용)
-          const response = await fetch(
-            `http://localhost:8080/api/v1/items/${itemId}`
-          );
+          const response = await fetch(`${API_BASE_URL}/v1/items/${itemId}`);
 
           if (!response.ok) {
             throw new Error(`서버 응답 오류: ${response.status}`);
           }
 
-          const rsData = await response.json(); // ✅ JSON 데이터 변환
+          const rsData = await response.json();
 
           if (rsData?.success) {
             const item = rsData.data;
@@ -103,13 +100,11 @@ const ItemForm = ({ isEditMode, itemId, setSelectedTab }: ItemFormProps) => {
     try {
       let response;
       if (isEditMode && itemId) {
-        // ✅ 상품 수정 요청 (PUT)
         response = await fetch(`${API_BASE_URL}/v1/items/${itemId}`, {
           method: "PUT",
-          body: formDataToSend, // ✅ FormData 전송
+          body: formDataToSend,
         });
       } else {
-        // ✅ 상품 등록 요청 (POST)
         response = await fetch(`${API_BASE_URL}/v1/items`, {
           method: "POST",
           body: formDataToSend,
@@ -122,12 +117,36 @@ const ItemForm = ({ isEditMode, itemId, setSelectedTab }: ItemFormProps) => {
 
       console.log(`✅ 상품 ${isEditMode ? "수정" : "등록"} 성공!`);
       setSelectedTab?.("items"); // ✅ 완료 후 상품 목록으로 이동
-      router.refresh(); // ✅ 리스트 새로고침
+      router.refresh();
     } catch (error) {
       console.error(
         `❌ 상품 ${isEditMode ? "수정" : "등록"} 중 오류 발생:`,
         error
       );
+    }
+  };
+
+  // ✅ 상품 삭제 함수 추가
+  const handleDelete = async () => {
+    if (!itemId) return;
+
+    const confirmDelete = window.confirm("정말로 이 상품을 삭제하시겠습니까?");
+    if (!confirmDelete) return;
+
+    try {
+      const response = await fetch(`${API_BASE_URL}/v1/items/${itemId}`, {
+        method: "DELETE",
+      });
+
+      if (!response.ok) {
+        throw new Error(`서버 응답 오류: ${response.status}`);
+      }
+
+      console.log("✅ 상품 삭제 성공!");
+      setSelectedTab?.("items"); // ✅ 삭제 후 상품 목록으로 이동
+      router.refresh();
+    } catch (error) {
+      console.error("❌ 상품 삭제 중 오류 발생:", error);
     }
   };
 
@@ -199,6 +218,15 @@ const ItemForm = ({ isEditMode, itemId, setSelectedTab }: ItemFormProps) => {
           </CardContent>
           <CardFooter className="flex justify-between">
             <Button type="submit">{isEditMode ? "수정" : "등록"}</Button>
+            {isEditMode && (
+              <Button
+                type="button"
+                className="bg-red-500"
+                onClick={handleDelete}
+              >
+                삭제
+              </Button>
+            )}
           </CardFooter>
         </form>
       </Card>
