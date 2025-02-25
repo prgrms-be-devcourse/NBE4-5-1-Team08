@@ -90,17 +90,22 @@ public class OrderInfoService {
     }
 
 
-    @Scheduled(cron = "*/10 * * * * *", zone = "Asia/Seoul")
+    @Scheduled(cron = "* * 14 * * *", zone = "Asia/Seoul")
     @Transactional
     public void updateOrderStatus() {
-        List<OrderInfo> orderInfoList = orderInfoRepository.findAllByOrderStatus(OrderStatus.ORDERED);
+        LocalDateTime now = LocalDateTime.now();
+        LocalDateTime today14 = now.withHour(14).withMinute(0).withSecond(0).withNano(0);
+        LocalDateTime yesterday14 = today14.minusDays(1);
 
+        List<OrderInfo> shippingList = orderInfoRepository.findAllByOrderStatus(OrderStatus.SHIPPING);
+        for (OrderInfo orderInfo : shippingList) {
+            orderInfo.setOrderStatus(OrderStatus.DELIVERED);
+        }
+
+        List<OrderInfo> orderInfoList = orderInfoRepository.findAllByOrderStatusAndCreatedDateBetween(OrderStatus.ORDERED, yesterday14, today14);
         for (OrderInfo orderInfo : orderInfoList) {
             orderInfo.setOrderStatus(OrderStatus.SHIPPING);
         }
-
-//        orderInfoRepository.saveAll(orderInfoList);
-        System.out.println("스케줄러 실행됨: " + LocalDateTime.now());
     }
 
 
