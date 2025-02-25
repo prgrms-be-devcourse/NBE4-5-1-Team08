@@ -3,6 +3,7 @@ package com.java.NBE4_5_1_8.domain.email.service;
 import com.java.NBE4_5_1_8.domain.orderitem.entity.OrderItem;
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
+import lombok.RequiredArgsConstructor;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
@@ -14,12 +15,9 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
+@RequiredArgsConstructor
 public class EmailService {
     private final JavaMailSender mailSender;
-
-    public EmailService(JavaMailSender mailSender) {
-        this.mailSender = mailSender;
-    }
 
     public void sendOrderConfirmation(String toEmail, Long orderId, List<OrderItem> orderItems) {
         try {
