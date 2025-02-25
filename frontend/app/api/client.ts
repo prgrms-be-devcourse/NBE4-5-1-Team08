@@ -1,11 +1,13 @@
 import createClient from "openapi-fetch";
-import {paths} from "@/lib/api/schema";
+import {paths} from "@/lib/api/_schema";
 
-const client = createClient<paths>({
+export const client = createClient<paths>({
     baseUrl: process.env.NEXT_PUBLIC_API_BASE_URL,
     headers: {
         "Content-Type": "application/json",
     },
 });
 
-export default client;
+export const clientFormData = createClient<paths>({
+    baseUrl: process.env.NEXT_PUBLIC_API_BASE_URL,
+});

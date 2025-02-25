@@ -1,4 +1,4 @@
-'use client';
+"use client";
 
 import React, {useState} from "react";
 import {Button} from "@/components/ui/button";
@@ -7,7 +7,7 @@ import {Card, CardContent, CardFooter, CardHeader, CardTitle} from "@/components
 import {Input} from "@/components/ui/input"
 import {Label} from "@/components/ui/label";
 import {Textarea} from "@/components/ui/textarea";
-import client from "@/app/api/client";
+import {client, clientFormData} from "@/app/api/client";
 
 
 type ItemFormProps = {
@@ -15,9 +15,11 @@ type ItemFormProps = {
         itemName?: string;
         category?: string;
         description?: string;
+        price?: number;
         stockQuantity?: number;
     };
     itemId?: number;
+    itemImage?: File | null;
     isEditMode: boolean;
 };
 
@@ -28,11 +30,20 @@ const ItemForm = ({itemFormProps, isEditMode, itemId}: ItemFormProps) => {
         itemName: itemFormProps?.itemName ?? "",
         category: itemFormProps?.category ?? "",
         description: itemFormProps?.description ?? "",
+        price: itemFormProps?.price ?? 0,
         stockQuantity: itemFormProps?.stockQuantity ?? 0,
     });
+    const [itemImage, setItemImage] = useState<File | null>(null);
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
         setFormData({...formData, [e.target.name]: e.target.value});
+    };
+
+    const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        if (e.target.files && e.target.files.length > 0) {
+            const file = e.target.files[0];
+            setItemImage(file);
+        }
     };
 
     const handleDelete = async (e: { preventDefault: () => void }) => {
@@ -47,14 +58,26 @@ const ItemForm = ({itemFormProps, isEditMode, itemId}: ItemFormProps) => {
 
     const handleSubmit = async (e: { preventDefault: () => void; }) => {
         e.preventDefault();
+
+        const formDataToSend = new FormData();
+        formDataToSend.append("itemName", formData.itemName);
+        formDataToSend.append("category", formData.category);
+        formDataToSend.append("description", formData.description);
+        formDataToSend.append("price", formData.price.toString());
+        formDataToSend.append("stockQuantity", formData.stockQuantity.toString());
+
+        if (itemImage) {
+            formDataToSend.append("itemImage", itemImage);
+        }
+
         if (isEditMode) {
-            await client.PUT('/v1/items/{itemId}', {
+            await clientFormData.PUT('/v1/items/{itemId}', {
                 params: {path: {itemId: itemId!}},
-                body: formData,
+                body: formDataToSend,
             })
         } else {
-            await client.POST(`/v1/items`, {
-                body: formData,
+            await clientFormData.POST(`/v1/items`, {
+                body: formDataToSend,
             });
         }
         router.push("/admin/items");
@@ -65,7 +88,7 @@ const ItemForm = ({itemFormProps, isEditMode, itemId}: ItemFormProps) => {
             <Card className="w-[350px]">
                 <form onSubmit={handleSubmit}>
                     <CardHeader>
-                        <CardTitle>Create project</CardTitle>
+                        <CardTitle>상품 정보</CardTitle>
                     </CardHeader>
                     <CardContent>
                         <div className="grid w-full items-center gap-4">
@@ -73,6 +96,9 @@ const ItemForm = ({itemFormProps, isEditMode, itemId}: ItemFormProps) => {
                                 <Label htmlFor="itemName">상품명</Label>
                                 <Input id="itemName" name="itemName" value={formData.itemName} onChange={handleChange}
                                        placeholder="Name of your project"/>
+                                <Label htmlFor="itemImage">상품이미지</Label>
+                                <Input id="itemImage" name="itemImage" type="file" accept="image/*"
+                                       onChange={handleImageChange}/>
                                 <Label htmlFor="category">카테고리</Label>
                                 <Input id="category" name="category" value={formData.category} onChange={handleChange}
                                        placeholder="Name of your project"/>
@@ -92,6 +118,10 @@ const ItemForm = ({itemFormProps, isEditMode, itemId}: ItemFormProps) => {
                                 <Textarea id="description" name="description" value={formData.description}
                                           onChange={handleChange}
                                           placeholder="Name of your project"/>
+                                <Label htmlFor="stockQuantity">가격</Label>
+                                <Input id="price" type="number" name="price"
+                                       value={formData.price} onChange={handleChange}
+                                       placeholder="Name of your project"/>
                                 <Label htmlFor="stockQuantity">수량</Label>
                                 <Input id="stockQuantity" type="number" name="stockQuantity"
                                        value={formData.stockQuantity} onChange={handleChange}
@@ -100,8 +130,8 @@ const ItemForm = ({itemFormProps, isEditMode, itemId}: ItemFormProps) => {
                         </div>
                     </CardContent>
                     <CardFooter className="flex justify-between">
-                        <Button type="submit" className="bg-blue-500">{isEditMode ? '수정' : '등록'}</Button>
-                        {isEditMode && <Button onClick={handleDelete} className="bg-red-500">삭제</Button>}
+                        <Button type="submit">{isEditMode ? '수정' : '등록'}</Button>
+                        {isEditMode && <Button onClick={handleDelete} variant={"destructive"}> 삭제</Button>}
                     </CardFooter>
                 </form>
             </Card>

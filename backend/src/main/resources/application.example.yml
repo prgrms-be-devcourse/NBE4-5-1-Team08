@@ -24,3 +24,6 @@ server:
 
 frontend:
   url: http://localhost:3000
+
+file:
+  upload-dir: src/main/resources/static/items
