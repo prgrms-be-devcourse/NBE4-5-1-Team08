@@ -45,7 +45,7 @@ public class BaseInitData {
     @Transactional
     public void itemInit() {
 
-        if(itemService.count() > 0) {
+        if (itemService.count() > 0) {
             return;
         }
 
@@ -54,26 +54,29 @@ public class BaseInitData {
         itemService.createItem(new ItemForm("Brazil Serra Do Caparaó", "커피콩", "밸런스 좋은 브라질 원두", 200, 5000, null));
         itemService.createItem(new ItemForm("Columbia Nariñó", "커피콩", "산미가 조화로운 콜롬비아 원두", 200, 5000, null));
 
-        IntStream.range(0, 100).forEach(i -> {
-            List<Item> allItems = itemService.findAll();
-            if (allItems.isEmpty()) return; // 아이템이 없으면 생성하지 않음
-
-
-
-            // OrderForm 생성
-            OrderForm orderForm = new OrderForm(
-                    List.of(new OrderItemDto(RANDOM.nextLong(allItems.size())+1, RANDOM.nextInt(5)+1)),
-                    "user" + i + "@example.com",
-                    "password" + i,
-                    "Address " + i
-            );
-
-            // 주문 정보 생성 및 저장
-            OrderInfo orderInfo = orderInfoService.createOrderInfo(orderForm);
-            orderInfo.setOrderStatus(OrderStatus.DELIVERED);
-            orderInfo.setCreatedDate(getRandomDateTime());
-        });
+        // createOrderInfo 에서 orderInfo.setOrderItems(orderItems); 을 주석처리 하고 주석해제해서 만들 것 그리고 다시 주석해줘야함
+//        IntStream.range(0, 100).forEach(i -> {
+//            List<Item> allItems = itemService.findAll();
+//            if (allItems.isEmpty()) return; // 아이템이 없으면 생성하지 않음
+//
+//
+//            // OrderForm 생성
+//            OrderForm orderForm = new OrderForm(
+//                    List.of(new OrderItemDto(RANDOM.nextLong(allItems.size()) + 1, RANDOM.nextInt(5) + 1)),
+//                    "user" + i + "@example.com",
+//                    "password" + i,
+//                    "Address " + i
+//            );
+//
+//            // 주문 정보 생성 및 저장
+//            OrderInfo orderInfo = orderInfoService.createOrderInfo(orderForm);
+//            orderInfo.setOrderStatus(OrderStatus.DELIVERED);
+//            orderInfo.setCreatedDate(getRandomDateTime());
+//
+//            orderInfoService.createOrderInfo(orderInfo);
+//        });
     }
+
     private LocalDateTime getRandomDateTime() {
         LocalDate START_DATE = LocalDate.of(2025, 2, 1);
         LocalDate END_DATE = LocalDate.of(2025, 2, 25);
