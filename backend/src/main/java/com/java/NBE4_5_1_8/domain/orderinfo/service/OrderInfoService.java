@@ -45,7 +45,6 @@ public class OrderInfoService {
 
         orderInfo.setOrderItems(orderItems);
         orderInfoRepository.save(orderInfo);
-        orderInfo.setDeliveryDateByOrderTime();
 
         return orderInfo.getOrderId();
     }
@@ -89,7 +88,6 @@ public class OrderInfoService {
         orderInfo.setOrderStatus(OrderStatus.CANCELLED);
     }
 
-
     @Scheduled(cron = "* * 14 * * *", zone = "Asia/Seoul")
     @Transactional
     public void updateOrderStatus() {
@@ -108,14 +106,13 @@ public class OrderInfoService {
         }
     }
 
-
     public OrderItem getOrderItemById(Long orderItemId) {
         return orderItemRepository.findById(orderItemId)
                 .orElseThrow(() -> new ServiceException(HttpStatus.BAD_REQUEST, ErrorMessage.ORDER_NOT_FOUND));
     }
 
     @Transactional
-    public void updateOrderItem(OrderItem orderItem, @NotNull Long itemId,@NotNull int quantity) {
+    public void updateOrderItem(OrderItem orderItem, @NotNull Long itemId, @NotNull int quantity) {
         orderItem.setItem(itemRepository.findById(itemId)
                 .orElseThrow(() -> new ServiceException(HttpStatus.BAD_REQUEST, ErrorMessage.ITEM_NOT_FOUND)));
         orderItem.setQuantity(quantity);
