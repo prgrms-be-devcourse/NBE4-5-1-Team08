@@ -39,7 +39,8 @@ public class OrderInfoService {
                     Item item = itemRepository.findById(dto.getItemId())
                             .orElseThrow(() -> new ServiceException(HttpStatus.BAD_REQUEST, ErrorMessage.ITEM_NOT_FOUND));
 
-                    OrderItem orderItem = OrderItem.createOrderItem(item, orderInfo, dto.getQuantity());
+//                    OrderItem orderItem = OrderItem.createOrderItem(item, orderInfo, dto.getQuantity());
+                    OrderItem orderItem = new OrderItem(item, orderInfo, dto.getQuantity());
                     orderItem.setOrderPrice(item.getPrice() * dto.getQuantity());
                     return orderItem;
                 })
