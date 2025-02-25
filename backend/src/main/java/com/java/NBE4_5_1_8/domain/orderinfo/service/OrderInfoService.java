@@ -25,6 +25,7 @@ public class OrderInfoService {
     private final OrderInfoRepository orderInfoRepository;
     private final ItemRepository itemRepository;
     private final OrderItemRepository orderItemRepository;
+    private final EmailService emailService;
 
     @Transactional
     public OrderInfo createOrderInfo(OrderForm orderForm) {
@@ -43,6 +44,9 @@ public class OrderInfoService {
 
         orderInfo.setOrderItems(orderItems);
         orderInfoRepository.save(orderInfo);
+
+        return orderInfo;
+        emailService.sendOrderConfirmation(orderForm.getMemberEmail(), orderInfo.getOrderId(), orderItems);
 
         return orderInfo;
     }
