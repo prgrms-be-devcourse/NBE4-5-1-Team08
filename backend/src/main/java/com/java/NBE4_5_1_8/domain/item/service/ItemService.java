@@ -5,7 +5,7 @@ import com.java.NBE4_5_1_8.domain.item.entity.Category;
 import com.java.NBE4_5_1_8.domain.item.entity.Item;
 import com.java.NBE4_5_1_8.domain.item.repository.CategoryRepository;
 import com.java.NBE4_5_1_8.domain.item.repository.ItemRepository;
-import com.java.NBE4_5_1_8.domain.orderitem.repository.OrderItemRepository;
+import com.java.NBE4_5_1_8.domain.orderinfo.repository.OrderItemRepository;
 import com.java.NBE4_5_1_8.global.exception.ServiceException;
 import com.java.NBE4_5_1_8.global.message.ErrorMessage;
 import lombok.RequiredArgsConstructor;
@@ -83,7 +83,7 @@ public class ItemService {
     }
 
     public List<Item> getItemList() {
-        return itemRepository.findAll();
+        return itemRepository.findAllByDeletedFalse();
     }
 
     public Item getItemById(Long itemId) {
@@ -115,7 +115,9 @@ public class ItemService {
 
         boolean hasOrderHistory = orderItemRepository.existsByItem(item);
         if (hasOrderHistory) {
-            throw new ServiceException(HttpStatus.BAD_REQUEST, ErrorMessage.ITEM_CANNOT_BE_DELETED);
+            item.setDeleted(true);
+            itemRepository.save(item);
+            throw new ServiceException(HttpStatus.OK, ErrorMessage.ITEM_BE_DISABLED);
         }
 
         itemRepository.delete(item);
