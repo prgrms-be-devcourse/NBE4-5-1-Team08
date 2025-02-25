@@ -11,7 +11,8 @@ const Dashboard = () => {
   const [selectedTab, setSelectedTab] = useState<
     "items" | "sales" | "addItem" | "editItem"
   >("items");
-  const [editItemId, setEditItemId] = useState<number | null>(null); // 수정할 상품 ID 저장
+  const [editItemId, setEditItemId] = useState<number | null>(null);
+
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [loading, setLoading] = useState(true);
 
@@ -67,7 +68,7 @@ const Dashboard = () => {
           <Content
             selectedTab={selectedTab}
             setSelectedTab={setSelectedTab}
-            setEditItemId={setEditItemId}
+            setEditItemId={setEditItemId} // 수정 기능 추가
           />
         )}
       </div>

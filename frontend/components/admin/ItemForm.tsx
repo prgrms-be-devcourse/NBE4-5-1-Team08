@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { useRouter } from "next/navigation";
 import {
@@ -13,109 +13,83 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { client } from "@/app/api/client";
-import { components } from "@/lib/api/schema"; // API 스키마 가져오기
-
-type CategoryType = components["schemas"]["CategoryDto"];
+import { client, clientFormData } from "@/app/api/client";
 
 type ItemFormProps = {
-  itemId?: number;
   isEditMode: boolean;
-  setSelectedTab: (tab: "items") => void;
+  itemId?: number;
+  setSelectedTab?: (tab: "items") => void; // ✅ 등록 후 리스트로 이동을 위해 추가
 };
 
-const ItemForm = ({ itemId, isEditMode, setSelectedTab }: ItemFormProps) => {
+const ItemForm = ({ isEditMode, itemId, setSelectedTab }: ItemFormProps) => {
   const router = useRouter();
-  const [categories, setCategories] = useState<CategoryType[]>([]);
   const [formData, setFormData] = useState({
     itemName: "",
     category: "",
     description: "",
     price: 0,
     stockQuantity: 0,
-    itemImage: "",
   });
+  const [itemImage, setItemImage] = useState<File | null>(null);
 
-  // ✅ 카테고리 목록 불러오기 (유효한 API 요청 확인)
-  useEffect(() => {
-    const fetchCategories = async () => {
-      try {
-        const rsData = await client.GET("/v1/categories", {});
-
-        if (rsData?.data?.success && Array.isArray(rsData.data.data)) {
-          setCategories(rsData.data.data);
-        } else {
-          console.error("카테고리 데이터를 불러오는 중 오류 발생");
-        }
-      } catch (error) {
-        console.error("카테고리 데이터를 불러오는 중 오류 발생:", error);
-      }
-    };
-
-    fetchCategories();
-  }, []);
-
-  // ✅ 상품 정보 불러오기 (수정 모드일 때)
-  useEffect(() => {
-    const fetchItemData = async () => {
-      if (isEditMode && itemId) {
-        try {
-          const rsData = await client.GET("/v1/items/{itemId}", {
-            params: { path: { itemId } },
-          });
-
-          if (rsData?.data?.success && rsData.data.data) {
-            setFormData((prevFormData) => ({
-              ...prevFormData,
-              ...rsData.data.data,
-            }));
-          }
-        } catch (error) {
-          console.error("상품 정보를 불러오는 중 오류 발생:", error);
-        }
-      }
-    };
-
-    fetchItemData();
-  }, [isEditMode, itemId]);
-
-  // ✅ 입력 필드 변경 핸들러
   const handleChange = (
-    e: React.ChangeEvent<
-      HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
-    >
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  // ✅ 상품 등록 및 수정 핸들러
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files.length > 0) {
+      setItemImage(e.target.files[0]);
+    }
+  };
+
+  const handleSubmit = async (e: { preventDefault: () => void }) => {
     e.preventDefault();
 
-    try {
-      const itemData = {
-        itemName: formData.itemName,
-        category: formData.category,
-        description: formData.description,
-        stockQuantity: formData.stockQuantity,
-        price: formData.price,
-        itemImage: formData.itemImage,
-      };
+    const formDataToSend = new FormData();
+    formDataToSend.append("itemName", formData.itemName);
+    formDataToSend.append("category", formData.category);
+    formDataToSend.append("description", formData.description);
+    formDataToSend.append("price", formData.price.toString());
+    formDataToSend.append("stockQuantity", formData.stockQuantity.toString());
 
+    if (itemImage) {
+      formDataToSend.append("itemImage", itemImage);
+    }
+
+    try {
       if (isEditMode && itemId) {
-        await client.PUT("/v1/items/{itemId}", {
-          params: {
-            path: { itemId },
-            query: { requestForm: itemData },
-          },
-        });
+        if (itemImage) {
+          // ✅ FormData 전송 (이미지 포함)
+          await clientFormData.PUT("/v1/items/{itemId}", {
+            params: { path: { itemId } }, // ✅ `query` 제거
+            body: formDataToSend, // ✅ FormData 직접 전송
+          });
+        } else {
+          // ✅ JSON 데이터 전송 (이미지 없음)
+          await client.PUT("/v1/items/{itemId}", {
+            params: {
+              path: { itemId },
+              query: {
+                requestForm: {
+                  itemName: formData.itemName,
+                  category: formData.category,
+                  description: formData.description,
+                  stockQuantity: formData.stockQuantity,
+                  price: formData.price,
+                },
+              },
+            },
+          });
+        }
       } else {
-        await client.POST("/v1/items", {
-          params: { query: { requestForm: itemData } },
+        await clientFormData.POST(`/v1/items`, {
+          body: formDataToSend, // ✅ FormData 직접 전송
         });
       }
 
-      setSelectedTab("items");
+      setSelectedTab?.("items"); // ✅ 등록 후 아이템 리스트로 이동
     } catch (error) {
       console.error("상품 등록/수정 중 오류 발생:", error);
     }
@@ -123,81 +97,64 @@ const ItemForm = ({ itemId, isEditMode, setSelectedTab }: ItemFormProps) => {
 
   return (
     <div className="flex flex-col justify-center items-center">
-      <Card className="w-[400px] bg-gray-800 text-white">
+      <Card className="w-[350px]">
         <form onSubmit={handleSubmit}>
           <CardHeader>
-            <CardTitle>{isEditMode ? "상품 수정" : "상품 등록"}</CardTitle>
+            <CardTitle>상품 정보</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="grid w-full items-center gap-4">
-              <Label htmlFor="itemName">상품명</Label>
-              <Input
-                id="itemName"
-                name="itemName"
-                value={formData.itemName}
-                onChange={handleChange}
-                required
-              />
-
-              <Label htmlFor="category">카테고리</Label>
-              <select
-                id="category"
-                name="category"
-                value={formData.category}
-                onChange={handleChange}
-                className="p-2 border rounded text-black"
-                required
-              >
-                <option value="">카테고리 선택</option>
-                {categories.map((cat) => (
-                  <option key={cat.categoryId} value={cat.categoryName}>
-                    {cat.categoryName}
-                  </option>
-                ))}
-              </select>
-
-              <Label htmlFor="description">상품 설명</Label>
-              <Textarea
-                id="description"
-                name="description"
-                value={formData.description}
-                onChange={handleChange}
-              />
-
-              <Label htmlFor="price">가격</Label>
-              <Input
-                id="price"
-                type="number"
-                name="price"
-                value={formData.price}
-                onChange={handleChange}
-                required
-              />
-
-              <Label htmlFor="stockQuantity">재고 수량</Label>
-              <Input
-                id="stockQuantity"
-                type="number"
-                name="stockQuantity"
-                value={formData.stockQuantity}
-                onChange={handleChange}
-                required
-              />
-
-              {/* ✅ 카테고리 추가 기능 (현재 제거됨) */}
-              {/* <div className="flex items-center gap-2">
+              <div className="flex flex-col space-y-1.5 gap-2">
+                <Label htmlFor="itemName">상품명</Label>
                 <Input
-                  type="text"
-                  value={newCategory}
-                  onChange={(e) => setNewCategory(e.target.value)}
-                  placeholder="새 카테고리 입력"
-                  className="p-2 border rounded text-black"
+                  id="itemName"
+                  name="itemName"
+                  value={formData.itemName}
+                  onChange={handleChange}
+                  required
                 />
-                <Button onClick={handleAddCategory} disabled={!newCategory.trim()}>
-                  추가
-                </Button>
+                <Label htmlFor="itemImage">상품 이미지</Label>
+                <Input
+                  id="itemImage"
+                  name="itemImage"
+                  type="file"
+                  accept="image/*"
+                  onChange={handleImageChange}
+                />
+                <Label htmlFor="category">카테고리</Label>
+                <Input
+                  id="category"
+                  name="category"
+                  value={formData.category}
+                  onChange={handleChange}
+                  required
+                />
+                <Label htmlFor="description">상품 설명</Label>
+                <Textarea
+                  id="description"
+                  name="description"
+                  value={formData.description}
+                  onChange={handleChange}
+                />
+                <Label htmlFor="price">가격</Label>
+                <Input
+                  id="price"
+                  type="number"
+                  name="price"
+                  value={formData.price}
+                  onChange={handleChange}
+                  required
+                />
+                <Label htmlFor="stockQuantity">재고 수량</Label>
+                <Input
+                  id="stockQuantity"
+                  type="number"
+                  name="stockQuantity"
+                  value={formData.stockQuantity}
+                  onChange={handleChange}
+                  required
+                />
               </div>
-              {errorMessage && <p className="text-red-500">{errorMessage}</p>} */}
             </div>
           </CardContent>
           <CardFooter className="flex justify-between">
