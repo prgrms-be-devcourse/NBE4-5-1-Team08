@@ -8,10 +8,6 @@ import {components} from "@/lib/api/schema";
 import {Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger} from "@/components/ui/sheet";
 import {Input} from "@/components/ui/input";
 import Link from "next/link";
-import { CartItem } from "@/type/types";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faCartPlus, faCartShopping } from "@fortawesome/free-solid-svg-icons";
-
 import {CartItem} from "@/type/types";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faCartPlus, faCartShopping} from "@fortawesome/free-solid-svg-icons";
@@ -27,12 +23,6 @@ import {
 import Image from "next/image";
 
 type ItemDto = components["schemas"]["ItemDto"];
-const HomeClientPage = ({ itemList }: { itemList: ItemDto[] }) => {
-  const [selectedItem, setSelectedItem] = useState<ItemDto | null>(null);
-  const [quantity, setQuantity] = useState<number>(1);
-  const [openDialog, setOpenDialog] = useState<boolean>(false);
-  const [openSheet, setOpenSheet] = useState<boolean>(false);
-  const [cartItemList, setCartItemList] = useState<CartItem[]>([]);
 
 const HomeClientPage = ({itemList, categoryList}: {
     itemList: ItemDto[];
@@ -46,16 +36,10 @@ const HomeClientPage = ({itemList, categoryList}: {
     const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
     const [filteredItemList, setFilteredItemList] = useState<ItemDto[]>(itemList);
 
-  const getCart = useCallback(() => {
-    return JSON.parse(localStorage.getItem("cart") || "[]") as CartItem[];
-  }, []);
+    const getCart = useCallback(() => {
+        return JSON.parse(localStorage.getItem("cart") || "[]") as CartItem[];
+    }, []);
 
-  const addToCart = (product: CartItem): void => {
-    if (quantity < 1) {
-      alert("1개 이상 주문해야합니다.");
-      return;
-    }
-    const cart: CartItem[] = JSON.parse(localStorage.getItem("cart") || "[]");
     const addToCart = (product: CartItem): void => {
         if (quantity < 1) {
             alert("1개 이상 주문해야 합니다.");
@@ -85,25 +69,23 @@ const HomeClientPage = ({itemList, categoryList}: {
         setCartItemList(getCart());
     }, [getCart]);
 
+    // ✅ 선택된 카테고리에 따라 itemList 필터링 & 첫 번째 카테고리 자동 선택
     useEffect(() => {
-        if (categoryList.length > 0) {
+        if (categoryList.length > 0 && selectedCategory === null) {
             setSelectedCategory(categoryList[0].categoryName);
         }
-    }, [categoryList]);
 
-    useEffect(() => {
         if (!selectedCategory) {
             setFilteredItemList(itemList);
         } else {
             setFilteredItemList(itemList.filter(item => item.category === selectedCategory));
         }
-    }, [selectedCategory, itemList]);
-
-
+    }, [selectedCategory, itemList, categoryList]);
 
     return (
         <div className="p-4">
-            <Select onValueChange={(value) => setSelectedCategory(value)}>
+            {/* 카테고리 선택 */}
+            <Select value={selectedCategory || undefined} onValueChange={(value) => setSelectedCategory(value)}>
                 <SelectTrigger className="w-[180px]">
                     <SelectValue placeholder="카테고리 선택"/>
                 </SelectTrigger>
@@ -119,6 +101,7 @@ const HomeClientPage = ({itemList, categoryList}: {
                 </SelectContent>
             </Select>
 
+            {/* 필터링된 아이템 리스트 */}
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
                 {filteredItemList.map((item) => (
                     <Card
@@ -133,10 +116,7 @@ const HomeClientPage = ({itemList, categoryList}: {
                             <CardTitle>{item.itemName}</CardTitle>
                         </CardHeader>
                         <CardContent>
-                            <CardContent>
-                                <Image src={process.env.NEXT_PUBLIC_API_BASE_URL + '/' + item.imageUrl}
-                                       alt={"item-image"}/>
-                            </CardContent>
+                            <Image src={process.env.NEXT_PUBLIC_API_BASE_URL + '/' + item.imageUrl} alt="item-image"/>
                         </CardContent>
                         <CardFooter>
                             <CardDescription>{item.description}</CardDescription>
@@ -145,6 +125,7 @@ const HomeClientPage = ({itemList, categoryList}: {
                 ))}
             </div>
 
+            {/* Dialog (아이템 상세) */}
             <Dialog open={openDialog} onOpenChange={(isOpen) => {
                 setOpenDialog(isOpen);
                 if (!isOpen) setQuantity(1);
@@ -154,12 +135,12 @@ const HomeClientPage = ({itemList, categoryList}: {
                     <DialogDescription>{selectedItem?.description ?? "Item Description"}</DialogDescription>
                     <DialogFooter>
                         <Input
-                            name={"quantity"}
-                            type={"number"}
+                            name="quantity"
+                            type="number"
                             onChange={(e) => setQuantity(Number(e.target.value))}
                             value={quantity}
                         />
-                        <Button type={"submit"} variant={"outline"} onClick={() => addToCart({
+                        <Button type="submit" variant="outline" onClick={() => addToCart({
                             itemId: selectedItem!.itemId,
                             itemName: selectedItem!.itemName,
                             quantity: quantity,
@@ -169,10 +150,11 @@ const HomeClientPage = ({itemList, categoryList}: {
                 </DialogContent>
             </Dialog>
 
+            {/* 장바구니 */}
             <Sheet>
                 <SheetTrigger asChild>
-                    <Button className={"rounded-full w-14 h-14 fixed bottom-20 right-5"}
-                            onClick={() => setOpenSheet(!openSheet)} variant={"outline"}>
+                    <Button className="rounded-full w-14 h-14 fixed bottom-20 right-5"
+                            onClick={() => setOpenSheet(!openSheet)} variant="outline">
                         <FontAwesomeIcon icon={cartItemList.length > 0 ? faCartPlus : faCartShopping}/>
                     </Button>
                 </SheetTrigger>
@@ -196,14 +178,12 @@ const HomeClientPage = ({itemList, categoryList}: {
                             <p className="text-center text-gray-500">장바구니가 비어 있습니다.</p>
                         )}
                     </div>
-                    <div className={"flex justify-between mt-5"}>
+                    <div className="flex justify-between mt-5">
                         {cartItemList.length > 0 && (
                             <div className="grid grid-cols-4 items-center gap-4 w-full">
-                                <div></div>
-                                <div></div>
                                 <p>{cartItemList.reduce((sum, item) => sum + item.quantity * item.price, 0)} 원</p>
-                                <Link href={"/checkout"}>
-                                    <Button className={"w-full"} type={"submit"}>주문</Button>
+                                <Link href="/checkout">
+                                    <Button className="w-full">주문</Button>
                                 </Link>
                             </div>
                         )}
