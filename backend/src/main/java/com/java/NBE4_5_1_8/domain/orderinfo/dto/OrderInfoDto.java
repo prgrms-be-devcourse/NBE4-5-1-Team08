@@ -26,7 +26,11 @@ public class OrderInfoDto {
         this.memberEmail = orderInfo.getMemberEmail();
         this.memberAddress = orderInfo.getMemberAddress();
         this.orderItems = orderInfo.getOrderItems().stream()
-                .map(orderItem -> new OrderItemDto(orderItem.getItem().getItemId(), orderItem.getQuantity()))
+                .map(orderItem -> new OrderItemDto(
+                        orderItem.getItem().getItemId(),
+                        orderItem.getItem().getItemName(),
+                        orderItem.getQuantity(),
+                        orderItem.getOrderPrice()))
                 .collect(Collectors.toList());
     }
 }
