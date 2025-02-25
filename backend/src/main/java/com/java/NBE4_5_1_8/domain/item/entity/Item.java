@@ -16,6 +16,7 @@ public class Item extends BaseTime {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long itemId;
     private String itemName;
+    @Column(nullable = false)
     private String category;
     private String description; // 제품 설명
     private int stockQuantity;

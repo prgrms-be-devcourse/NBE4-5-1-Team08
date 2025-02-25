@@ -1,7 +1,9 @@
 package com.java.NBE4_5_1_8.domain.item.service;
 
 import com.java.NBE4_5_1_8.domain.item.dto.ItemForm;
+import com.java.NBE4_5_1_8.domain.item.entity.Category;
 import com.java.NBE4_5_1_8.domain.item.entity.Item;
+import com.java.NBE4_5_1_8.domain.item.repository.CategoryRepository;
 import com.java.NBE4_5_1_8.domain.item.repository.ItemRepository;
 import com.java.NBE4_5_1_8.global.exception.ServiceException;
 import com.java.NBE4_5_1_8.global.message.ErrorMessage;
@@ -23,6 +25,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class ItemService {
     private final ItemRepository itemRepository;
+    private final CategoryRepository categoryRepository;
 
     @Value("${file.upload-dir}")
     private String itemsDir;
@@ -52,9 +55,16 @@ public class ItemService {
 
     @Transactional
     public Item createItem(ItemForm requestForm) {
+        Category category = categoryRepository.findByCategoryName(requestForm.getCategory())
+                .orElseGet(() -> {
+                    Category newCategory = new Category();
+                    newCategory.setCategoryName(requestForm.getCategory());
+                    return categoryRepository.save(newCategory);
+                });
+
         Item item = new Item();
         item.setItemName(requestForm.getItemName());
-        item.setCategory(requestForm.getCategory());
+        item.setCategory(category.getCategoryName());
         item.setDescription(requestForm.getDescription());
         item.setStockQuantity(requestForm.getStockQuantity());
         item.setPrice(requestForm.getPrice());

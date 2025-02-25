@@ -14,9 +14,11 @@ import com.java.NBE4_5_1_8.global.message.ErrorMessage;
 import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -89,13 +91,31 @@ public class OrderInfoService {
         orderInfo.setOrderStatus(OrderStatus.CANCELLED);
     }
 
+    @Scheduled(cron = "0 0 14 * * *", zone = "Asia/Seoul")
+    @Transactional
+    public void scheduleOrderProcessing() {
+        LocalDateTime now = LocalDateTime.now();
+        LocalDateTime today14 = now.withHour(14).withMinute(0).withSecond(0).withNano(0);
+        LocalDateTime yesterday14 = today14.minusDays(1);
+
+        List<OrderInfo> shippingList = orderInfoRepository.findAllByOrderStatus(OrderStatus.SHIPPING);
+        for (OrderInfo orderInfo : shippingList) {
+            orderInfo.setOrderStatus(OrderStatus.DELIVERED);
+        }
+
+        List<OrderInfo> orderInfoList = orderInfoRepository.findAllByOrderStatusAndCreatedDateBetween(OrderStatus.ORDERED, yesterday14, today14);
+        for (OrderInfo orderInfo : orderInfoList) {
+            orderInfo.setOrderStatus(OrderStatus.SHIPPING);
+        }
+    }
+
     public OrderItem getOrderItemById(Long orderItemId) {
         return orderItemRepository.findById(orderItemId)
                 .orElseThrow(() -> new ServiceException(HttpStatus.BAD_REQUEST, ErrorMessage.ORDER_NOT_FOUND));
     }
 
     @Transactional
-    public void updateOrderItem(OrderItem orderItem, @NotNull Long itemId,@NotNull int quantity) {
+    public void updateOrderItem(OrderItem orderItem, @NotNull Long itemId, @NotNull int quantity) {
         orderItem.setItem(itemRepository.findById(itemId)
                 .orElseThrow(() -> new ServiceException(HttpStatus.BAD_REQUEST, ErrorMessage.ITEM_NOT_FOUND)));
         orderItem.setQuantity(quantity);

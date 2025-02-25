@@ -12,4 +12,11 @@ import java.util.List;
 public interface OrderInfoRepository extends JpaRepository<OrderInfo, Long> {
     OrderInfo findByOrderIdAndMemberPassword(Long orderId, String password);
     List<OrderInfo> findByOrderStatusAndCreatedDateBetween(OrderStatus orderStatus, LocalDateTime start, LocalDateTime end);
+
+    List<OrderInfo> findAllByOrderStatus(OrderStatus orderStatus);
+
+//    @Query("SELECT o FROM OrderInfo o WHERE o.orderStatus = 'ORDERED' AND o.createdDate BETWEEN :yesterday14 AND :today14")
+//    List<OrderInfo> findAllOrderedBetweenYesterday14AndToday14(@Param("yesterday14") LocalDateTime yesterday14, @Param("today14") LocalDateTime today14);
+
+    List<OrderInfo> findAllByOrderStatusAndCreatedDateBetween(OrderStatus orderStatus, LocalDateTime createdDateAfter, LocalDateTime createdDateBefore);
 }

@@ -16,7 +16,10 @@ public enum SuccessMessage implements MessageType{
     ORDER_UPDATED("주문 수정 성공"),
     ORDER_DELETED("주문 삭제 성공"),
     ORDER_FETCHED("주문 단건 조회 성공"),
-    ORDER_LIST_FETCHED("주문 목록 조회 성공");
+    ORDER_LIST_FETCHED("주문 목록 조회 성공"),
+
+    CATEGORY_CREATED("카테고리 등록 성공"),
+    CATEGORY_LIST_FETCHED("카테고리 목록 조회 성공");
 
     private final String message;
 }
