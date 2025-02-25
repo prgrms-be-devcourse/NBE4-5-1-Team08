@@ -23,7 +23,7 @@ public class SecurityConfig {
         http
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("v1/**", "v3/**", "/items/**").permitAll()
+                        .requestMatchers("v1/**", "v3/**", "/items/**", "/categories/**").permitAll()
                         .anyRequest().authenticated()
                 );
 
