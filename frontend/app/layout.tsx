@@ -1,40 +1,41 @@
-import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
-import "./globals.css";
+import type {Metadata} from "next";
+import {Geist, Geist_Mono} from "next/font/google";
+import "@/app/globals.css";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 
 const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
+    variable: "--font-geist-sans",
+    subsets: ["latin"],
 });
 
 const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
+    variable: "--font-geist-mono",
+    subsets: ["latin"],
 });
 
 export const metadata: Metadata = {
-  title: "Grids & Circles",
-  description: "We make good coffee",
+    title: "Grids & Circles",
+    description: "we make good coffee",
 };
 
 export default function RootLayout({
-  children,
-}: Readonly<{
-  children: React.ReactNode;
+                                       children,
+                                   }: Readonly<{
+    children: React.ReactNode;
 }>) {
-  return (
-    <html lang="en">
-      <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
-      >
+    return (
+        <html lang="en">
+        <body
+            className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+        >
         <div className="flex flex-col min-h-screen">
-          <Header />
-          <main className="container p-4 flex-grow mx-auto">{children}</main>
-          <Footer />
+            <Header/>
+            <main className="container p-4 flex-grow mx-auto">{children}</main>
+            <Footer/>
         </div>
-      </body>
-    </html>
-  );
+
+        </body>
+        </html>
+    );
 }
