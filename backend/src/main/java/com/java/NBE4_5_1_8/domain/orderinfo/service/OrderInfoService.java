@@ -96,7 +96,7 @@ public class OrderInfoService {
     }
 
     @Transactional
-    public void updateOrderItem(OrderItem orderItem, @NotNull long itemId, @NotNull int quantity) {
+    public void updateOrderItem(OrderItem orderItem, @NotNull long itemId,@NotNull int quantity) {
         orderItem.setItem(itemRepository.findById(itemId)
                 .orElseThrow(() -> new ServiceException(HttpStatus.BAD_REQUEST, ErrorMessage.ITEM_NOT_FOUND)));
         orderItem.setQuantity(quantity);
