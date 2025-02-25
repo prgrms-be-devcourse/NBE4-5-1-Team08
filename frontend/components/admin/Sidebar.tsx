@@ -3,8 +3,8 @@
 import { useRouter } from "next/navigation";
 
 type SidebarProps = {
-  selectedTab: "items" | "sales" | "addItem";
-  setSelectedTab: (tab: "items" | "sales" | "addItem") => void;
+  selectedTab: "items" | "sales" | "addItem" | "editItem"; // ✅ "editItem" 추가
+  setSelectedTab: (tab: "items" | "sales" | "addItem" | "editItem") => void; // ✅ "editItem" 추가
 };
 
 const Sidebar = ({ selectedTab, setSelectedTab }: SidebarProps) => {

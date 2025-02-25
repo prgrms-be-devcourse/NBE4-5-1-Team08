@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { useRouter } from "next/navigation";
 import {
@@ -13,31 +13,47 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { clientFormData } from "@/app/api/client";
-
+import { client } from "@/app/api/client";
 type ItemFormProps = {
-  itemFormProps?: {
-    itemName?: string;
-    category?: string;
-    description?: string;
-    price?: number;
-    stockQuantity?: number;
-  };
   itemId?: number;
   isEditMode: boolean;
   setSelectedTab: (tab: "items") => void;
 };
 
-const ItemForm = ({ itemFormProps, isEditMode, itemId }: ItemFormProps) => {
+const ItemForm = ({ itemId, isEditMode, setSelectedTab }: ItemFormProps) => {
   const router = useRouter();
   const [formData, setFormData] = useState({
-    itemName: itemFormProps?.itemName ?? "",
-    category: itemFormProps?.category ?? "",
-    description: itemFormProps?.description ?? "",
-    price: itemFormProps?.price ?? 0,
-    stockQuantity: itemFormProps?.stockQuantity ?? 0,
+    itemName: "",
+    category: "",
+    description: "",
+    price: 0,
+    stockQuantity: 0,
+    imageUrl: "/static/default.png",
   });
-  const [itemImage, setItemImage] = useState<File | null>(null);
+
+  useEffect(() => {
+    const fetchItemData = async () => {
+      if (isEditMode && itemId) {
+        try {
+          const rsData = await client.GET("/v1/items/{itemId}", {
+            params: { path: { itemId } },
+          });
+
+          // ✅ 데이터가 존재하는 경우에만 상태 업데이트
+          if (rsData?.data?.success && rsData.data.data) {
+            setFormData((prevFormData) => ({
+              ...prevFormData,
+              ...rsData.data.data,
+            }));
+          }
+        } catch (error) {
+          console.error("상품 정보를 불러오는 중 오류 발생:", error);
+        }
+      }
+    };
+
+    fetchItemData();
+  }, [isEditMode, itemId]);
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
@@ -45,59 +61,65 @@ const ItemForm = ({ itemFormProps, isEditMode, itemId }: ItemFormProps) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files && e.target.files.length > 0) {
-      setItemImage(e.target.files[0]);
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+
+    try {
+      if (isEditMode && itemId) {
+        await client.PUT("/v1/items/{itemId}", {
+          params: {
+            path: { itemId },
+            query: {
+              requestForm: {
+                itemName: formData.itemName,
+                category: formData.category,
+                description: formData.description,
+                stockQuantity: formData.stockQuantity,
+                price: formData.price,
+                itemImage: formData.imageUrl, // 기본 이미지 URL 유지
+              },
+            },
+          },
+        });
+      } else {
+        await client.POST("/v1/items", {
+          params: {
+            query: {
+              requestForm: {
+                itemName: formData.itemName,
+                category: formData.category,
+                description: formData.description,
+                stockQuantity: formData.stockQuantity,
+                price: formData.price,
+                itemImage: formData.imageUrl, // 기본 이미지 URL 유지
+              },
+            },
+          },
+        });
+      }
+
+      setSelectedTab("items");
+    } catch (error) {
+      console.error("상품 등록/수정 중 오류 발생:", error);
     }
   };
 
   const handleDelete = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (confirm("삭제하시겠습니까?") && itemId) {
-      await clientFormData.DELETE("/v1/items/{itemId}", {
-        params: { path: { itemId } }, // 기존 DELETE 방식 유지
-        credentials: "include",
-      });
-      router.push("/admin/items");
+    if (!itemId) {
+      console.error("삭제할 상품 ID가 없습니다.");
+      return;
     }
-  };
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-
-    // FormData를 사용하지 않고, query 파라미터에 포함
-    const requestData = {
-      requestForm: {
-        itemName: formData.itemName,
-        category: formData.category,
-        description: formData.description,
-        stockQuantity: formData.stockQuantity,
-        price: formData.price,
-        itemImage: itemImage ? itemImage.name : undefined, // 이미지 파일명만 포함
-      },
-    };
-
-    try {
-      if (isEditMode && itemId) {
-        await clientFormData.PUT("/v1/items/{itemId}", {
-          params: {
-            path: { itemId }, // 기존 방식 유지
-            query: requestData, // `query` 파라미터 활용
-          },
-          credentials: "include",
+    if (confirm("삭제하시겠습니까?")) {
+      try {
+        await client.DELETE("/v1/items/{itemId}", {
+          params: { path: { itemId } },
         });
-      } else {
-        await clientFormData.POST("/v1/items", {
-          params: {
-            query: requestData, // `query` 파라미터 활용
-          },
-          credentials: "include",
-        });
+        setSelectedTab("items");
+      } catch (error) {
+        console.error("상품 삭제 실패:", error);
       }
-
-      router.push("/admin/items");
-    } catch (error) {
-      console.error("상품 등록/수정 중 오류 발생:", error);
     }
   };
 
@@ -118,15 +140,6 @@ const ItemForm = ({ itemFormProps, isEditMode, itemId }: ItemFormProps) => {
                   value={formData.itemName}
                   onChange={handleChange}
                   required
-                />
-
-                <Label htmlFor="itemImage">상품 이미지</Label>
-                <Input
-                  id="itemImage"
-                  name="itemImage"
-                  type="file"
-                  accept="image/*"
-                  onChange={handleImageChange}
                 />
 
                 <Label htmlFor="category">카테고리</Label>
@@ -156,7 +169,7 @@ const ItemForm = ({ itemFormProps, isEditMode, itemId }: ItemFormProps) => {
                   required
                 />
 
-                <Label htmlFor="stockQuantity">수량</Label>
+                <Label htmlFor="stockQuantity">재고 수량</Label>
                 <Input
                   id="stockQuantity"
                   type="number"

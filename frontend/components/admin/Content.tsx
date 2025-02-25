@@ -13,19 +13,25 @@ import { Button } from "@/components/ui/button";
 import { client } from "@/app/api/client";
 
 type ItemType = {
-  itemId?: number;
-  itemName?: string;
-  category?: string;
-  description?: string;
-  stockQuantity?: number;
-  price?: number;
+  itemId: number;
+  itemName: string;
+  category: string;
+  description: string;
+  stockQuantity: number;
+  price: number;
 };
 
 type ContentProps = {
-  selectedTab: "items" | "sales";
+  selectedTab: "items" | "sales" | "editItem";
+  setSelectedTab: (tab: "items" | "sales" | "editItem") => void;
+  setSelectedItemId: (itemId: number) => void; // 📌 추가 (선택된 상품 ID 저장)
 };
 
-const Content = ({ selectedTab }: ContentProps) => {
+const Content = ({
+  selectedTab,
+  setSelectedTab,
+  setSelectedItemId,
+}: ContentProps) => {
   const [items, setItems] = useState<ItemType[]>([]);
 
   useEffect(() => {
@@ -34,7 +40,17 @@ const Content = ({ selectedTab }: ContentProps) => {
         try {
           const rsData = await client.GET("/v1/items");
           if (rsData?.data?.success) {
-            setItems(rsData.data.data || []);
+            setItems(
+              (rsData.data.data || []).map((item) => ({
+                itemId: item.itemId ?? 0,
+                itemName: item.itemName ?? "",
+                category: item.category ?? "",
+                description: item.description ?? "",
+                stockQuantity: item.stockQuantity ?? 0,
+                price: item.price ?? 0,
+                imageUrl: item.imageUrl ?? "/static/default.png",
+              }))
+            );
           }
         } catch (error) {
           console.error("상품 데이터를 불러오는 중 오류 발생:", error);
@@ -68,8 +84,17 @@ const Content = ({ selectedTab }: ContentProps) => {
                     <p>재고: {item.stockQuantity}</p>
                     <p>가격: {item.price?.toLocaleString()}원</p>
                   </CardContent>
-                  <CardFooter>
-                    <Button className="bg-green-500">수정</Button>
+                  <CardFooter className="flex justify-between">
+                    {/* 🔹 수정 버튼 클릭 시 `editItem`으로 변경 + `itemId` 저장 */}
+                    <Button
+                      className="bg-green-500"
+                      onClick={() => {
+                        setSelectedItemId(item.itemId); // 📌 선택된 상품 ID 저장
+                        setSelectedTab("editItem"); // 📌 "상품 수정" 화면으로 변경
+                      }}
+                    >
+                      수정
+                    </Button>
                   </CardFooter>
                 </Card>
               ))
