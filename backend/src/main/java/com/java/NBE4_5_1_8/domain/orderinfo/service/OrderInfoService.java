@@ -92,7 +92,7 @@ public class OrderInfoService {
         orderInfo.setOrderStatus(OrderStatus.CANCELLED);
     }
 
-    @Scheduled(cron = "* * 14 * * *", zone = "Asia/Seoul")
+    @Scheduled(cron = "0 0 14 * * *", zone = "Asia/Seoul")
     @Transactional
     public void scheduleOrderProcessing() {
         LocalDateTime now = LocalDateTime.now();
