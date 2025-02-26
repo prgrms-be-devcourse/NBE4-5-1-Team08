@@ -34,7 +34,7 @@ const HomeClientPage = ({itemList, categoryList}: {
     const [openSheet, setOpenSheet] = useState<boolean>(false);
     const [cartItemList, setCartItemList] = useState<CartItem[]>([]);
     const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
-    const [filteredItemList, setFilteredItemList] = useState<ItemDto[]>(itemList);
+    const [filteredItemList, setFilteredItemList] = useState<ItemDto[]>([]);
 
     const getCart = useCallback(() => {
         return JSON.parse(localStorage.getItem("cart") || "[]") as CartItem[];
@@ -95,7 +95,7 @@ const HomeClientPage = ({itemList, categoryList}: {
                 <SelectTrigger className="w-[180px]">
                     <SelectValue placeholder="카테고리 선택"/>
                 </SelectTrigger>
-                <SelectContent>
+                <SelectContent className="bg-white dark:bg-gray-900">
                     <SelectGroup>
                         <SelectLabel>카테고리</SelectLabel>
                         {categoryList.map(category => (

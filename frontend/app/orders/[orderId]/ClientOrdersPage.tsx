@@ -18,7 +18,7 @@ const ClientOrdersPage = () => {
     useEffect(() => {
         if (!orderId) return;
         const fetchOrderInfo = async () => {
-            const storedPassword = sessionStorage.getItem("orderPassword");
+            const storedPassword = JSON.parse(sessionStorage.getItem("orderPassword") || "null");
 
             if (!storedPassword) {
                 alert("비밀번호 정보가 없습니다. 다시 로그인해주세요.");
@@ -92,12 +92,6 @@ const ClientOrdersPage = () => {
             <div className="mt-6 p-6 border rounded-lg shadow-md">
                 <h2 className="text-xl font-bold mb-4">배송 정보 입력</h2>
                 <Table>
-                    <TableHeader>
-                        <TableRow>
-                            <TableHead className="w-32">항목</TableHead>
-                            <TableHead>입력값</TableHead>
-                        </TableRow>
-                    </TableHeader>
                     <TableBody>
                         <TableRow>
                             <TableCell className="font-medium">이메일</TableCell>
@@ -118,7 +112,7 @@ const ClientOrdersPage = () => {
                 </Table>
 
                 {orderInfo?.orderStatus === "ORDERED" && (
-                    <div className="flex justify-center mt-5">
+                    <div className="flex justify-between">
                         <Button onClick={() => {
                             sessionStorage.removeItem("orderInfo");
                             sessionStorage.removeItem("orderPassword");
@@ -126,7 +120,7 @@ const ClientOrdersPage = () => {
                         }}>
                             다른 주문 조회
                         </Button>
-                        <Button type="button" className="w-1/2" variant="destructive" onClick={async () => {
+                        <Button type="button" className="w-1/3" variant="destructive" onClick={async () => {
                             try {
                                 await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/v1/orders/${orderId}`, {
                                     method: "DELETE",
