@@ -3,8 +3,8 @@
 import { useRouter } from "next/navigation";
 
 type SidebarProps = {
-  selectedTab: "items" | "sales" | "addItem" | "editItem"; // ✅ "editItem" 추가
-  setSelectedTab: (tab: "items" | "sales" | "addItem" | "editItem") => void; // ✅ "editItem" 추가
+  selectedTab: "items" | "addItem" | "editItem"; // ✅ "sales" 제거
+  setSelectedTab: (tab: "items" | "addItem" | "editItem") => void; // ✅ "sales" 제거
 };
 
 const Sidebar = ({ selectedTab, setSelectedTab }: SidebarProps) => {
@@ -26,14 +26,6 @@ const Sidebar = ({ selectedTab, setSelectedTab }: SidebarProps) => {
           onClick={() => setSelectedTab("items")}
         >
           전체 상품 조회
-        </button>
-        <button
-          className={`w-full p-4 ${
-            selectedTab === "sales" ? "bg-gray-700" : ""
-          }`}
-          onClick={() => setSelectedTab("sales")}
-        >
-          매출 조회
         </button>
         <button
           className={`w-full p-4 ${

@@ -9,7 +9,7 @@ import ItemForm from "@/components/admin/ItemForm";
 const Dashboard = () => {
   const router = useRouter();
   const [selectedTab, setSelectedTab] = useState<
-    "items" | "sales" | "addItem" | "editItem"
+    "items" | "addItem" | "editItem"
   >("items");
   const [editItemId, setEditItemId] = useState<number | null>(null);
 

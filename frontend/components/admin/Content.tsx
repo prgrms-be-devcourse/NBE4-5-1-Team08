@@ -23,8 +23,8 @@ type ItemType = {
 };
 
 type ContentProps = {
-  selectedTab: "items" | "sales" | "editItem";
-  setSelectedTab: (tab: "items" | "sales" | "editItem") => void;
+  selectedTab: "items" | "editItem";
+  setSelectedTab: (tab: "items" | "editItem") => void;
   setEditItemId: React.Dispatch<React.SetStateAction<number | null>>;
 };
 
