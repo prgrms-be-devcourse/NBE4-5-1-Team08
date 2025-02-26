@@ -46,7 +46,7 @@ const SalesChart = () => {
                 setData(formattedData); // 변환된 데이터 상태 업데이트
             })
             .catch(err => console.error("Error fetching sales data:", err));
-    }, []);
+    }, [date]);
 
     const chartConfig = {
         sales: {
