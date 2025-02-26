@@ -90,7 +90,9 @@ const ClientOrdersPage = () => {
             </Table>
 
             <div className="mt-6 p-6 border rounded-lg shadow-md">
-                <h2 className="text-xl font-bold mb-4">배송 정보 입력</h2>
+                <h2 className="text-xl font-bold mb-4">배송 정보 확인</h2>
+                <h2 className="font-medium">{orderInfo?.orderStatus}</h2>
+
                 <Table>
                     <TableBody>
                         <TableRow>
@@ -120,20 +122,28 @@ const ClientOrdersPage = () => {
                         }}>
                             다른 주문 조회
                         </Button>
-                        <Button type="button" className="w-1/3" variant="destructive" onClick={async () => {
-                            try {
-                                await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/v1/orders/${orderId}`, {
-                                    method: "DELETE",
-                                    headers: {
-                                        "Content-Type": "application/json",
-                                        "memberPassword": sessionStorage.getItem("orderPassword") || "",
-                                    },
-                                });
-                                router.push("/");
-                            } catch {
-                                alert("서버 오류");
-                            }
-                        }}>
+                        <Button
+                            type="button"
+                            className="w-1/3"
+                            variant="destructive"
+                            onClick={async () => {
+                                const confirmCancel = window.confirm("정말 주문을 취소하시겠습니까?");
+                                if (!confirmCancel) return;
+
+                                try {
+                                    await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/v1/orders/${orderId}`, {
+                                        method: "DELETE",
+                                        headers: {
+                                            "Content-Type": "application/json",
+                                            "memberPassword": sessionStorage.getItem("orderPassword") || "",
+                                        },
+                                    });
+                                    router.push("/");
+                                } catch {
+                                    alert("서버 오류");
+                                }
+                            }}
+                        >
                             주문 취소
                         </Button>
                     </div>
