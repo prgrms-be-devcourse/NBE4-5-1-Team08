@@ -40,7 +40,12 @@ const HomeClientPage = ({itemList, categoryList}: {
         return JSON.parse(localStorage.getItem("cart") || "[]") as CartItem[];
     }, []);
 
-    const addToCart = (product: CartItem): void => {
+    const addToCart = (product: {
+        itemId: number | undefined;
+        itemName: string | undefined;
+        quantity: number;
+        price: number
+    }): void => {
         if (quantity < 1) {
             alert("1개 이상 주문해야 합니다.");
             return;
@@ -82,6 +87,7 @@ const HomeClientPage = ({itemList, categoryList}: {
         }
     }, [selectedCategory, itemList, categoryList]);
 
+
     return (
         <div className="p-4">
             {/* 카테고리 선택 */}
@@ -102,7 +108,7 @@ const HomeClientPage = ({itemList, categoryList}: {
             </Select>
 
             {/* 필터링된 아이템 리스트 */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+            <div className="mt-10 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
                 {filteredItemList.map((item) => (
                     <Card
                         key={item.itemId}
@@ -116,7 +122,12 @@ const HomeClientPage = ({itemList, categoryList}: {
                             <CardTitle>{item.itemName}</CardTitle>
                         </CardHeader>
                         <CardContent>
-                            <Image src={process.env.NEXT_PUBLIC_API_BASE_URL + '/' + item.imageUrl} alt="item-image"/>
+                            <Image
+                                src={process.env.NEXT_PUBLIC_API_BASE_URL! + item.imageUrl}
+                                alt="item-image"
+                                width={200}
+                                height={200}
+                            />
                         </CardContent>
                         <CardFooter>
                             <CardDescription>{item.description}</CardDescription>
@@ -144,7 +155,7 @@ const HomeClientPage = ({itemList, categoryList}: {
                             itemId: selectedItem!.itemId,
                             itemName: selectedItem!.itemName,
                             quantity: quantity,
-                            price: selectedItem!.price * quantity,
+                            price: (selectedItem?.price || 0) * quantity,
                         })}>추가</Button>
                     </DialogFooter>
                 </DialogContent>

@@ -1,7 +1,10 @@
-import type {NextConfig} from "next";
+import {NextConfig} from "next";
 
+/** @type {import('next').NextConfig} */
 const nextConfig: NextConfig = {
-    /* config options here */
+    images: {
+        domains: ["localhost"], // ✅ "localhost" 추가
+    },
 };
 
-export default nextConfig;
+module.exports = nextConfig;

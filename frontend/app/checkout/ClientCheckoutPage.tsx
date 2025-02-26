@@ -53,7 +53,7 @@ const ClientCheckoutPage = () => {
         };
 
         try {
-            await client.POST('/v1/orders', {
+            client.POST('/v1/orders', {
                 body: payload,
             });
         } catch (error) {

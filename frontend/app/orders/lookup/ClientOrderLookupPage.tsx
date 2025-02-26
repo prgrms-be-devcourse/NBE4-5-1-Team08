@@ -9,10 +9,9 @@ import {Form, FormControl, FormField, FormItem, FormLabel, FormMessage} from "@/
 import {Input} from "@/components/ui/input";
 import {Button} from "@/components/ui/button";
 import {Card} from "@/components/ui/card";
-import {client} from "@/app/api/client";
 
 const orderLookupSchema = z.object({
-    orderId: z.string().min(1, {message: "주문번호를 입력하세요."}),
+    orderId: z.string().regex(/^\d+$/, {message: "주문번호는 숫자만 입력 가능합니다."}),
     password: z.string().min(4, {message: "비밀번호는 최소 4자 이상이어야 합니다."}),
 });
 
@@ -27,20 +26,8 @@ const ClientOrderLookupPage = () => {
     });
 
     const onSubmit = async (values: { orderId: string; password: string }) => {
-        try {
-            const rsData = await client.GET('/v1/orders/{orderId}', {
-                headers: {
-                    authorization: `Bearer ${values.password}`,
-                }
-            });
+        sessionStorage.setItem("orderPassword", JSON.stringify(values.password));
 
-            if (!rsData?.data?.success || !rsData.data.data) {
-                return <div>데이터 로드 실패</div>
-            }
-            sessionStorage.setItem("orderInfo", JSON.stringify(rsData.data.data));
-        } catch (error) {
-            console.log(error);
-        }
         router.push(`/orders/${values.orderId}`);
     };
 
