@@ -192,6 +192,8 @@ const HomeClientPage = ({itemList, categoryList}: {
                     <div className="flex justify-between mt-5">
                         {cartItemList.length > 0 && (
                             <div className="grid grid-cols-4 items-center gap-4 w-full">
+                                <div></div>
+                                <div></div>
                                 <p>{cartItemList.reduce((sum, item) => sum + item.quantity * item.price, 0)} 원</p>
                                 <Link href="/checkout">
                                     <Button className="w-full">주문</Button>
