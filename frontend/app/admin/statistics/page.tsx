@@ -36,7 +36,7 @@ const SalesChart = () => {
         client.GET('/v1/statistics/hourly', {
             params: {
                 query: {
-                    date: date?.toISOString(),
+                    date: date?.toISOString().split("T")[0],
                 },
             }
         })
